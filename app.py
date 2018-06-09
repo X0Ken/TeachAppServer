@@ -2,28 +2,17 @@ import json
 import uuid
 from datetime import datetime
 
-
 from tornado.gen import coroutine
 from tornado.ioloop import IOLoop
-from tornado.options import define
-from tornado.options import options
-from tornado.web import Application
-from tornado.web import RequestHandler
-from tornado_sqlalchemy import SessionMixin
-from tornado_sqlalchemy import as_future
-from tornado_sqlalchemy import declarative_base
-from tornado_sqlalchemy import make_session_factory
+from tornado.options import define, options
+from tornado.web import Application, RequestHandler
+from tornado_sqlalchemy import (SessionMixin, as_future, declarative_base,
+                                make_session_factory)
 
 from fake import fake_data
-from models import DeclarativeBase
-from models import User
-from models import Job
-from handlers.user import UserHandler
-from handlers.user import UserLoginHandler
-from handlers.user import UserLogoutHandler
-from handlers.user import UserRegHandler
-from handlers.user import TokenHandler
 from handlers.job import JobHandler
+from handlers.user import TokenHandler, UserHandler, UserInfoHandler
+from models import DeclarativeBase, Job, User
 
 
 define("database_url",
@@ -45,21 +34,23 @@ class AsyncWebRequestHandler(RequestHandler, SessionMixin):
         self.write('{} users so far!'.format(count))
 
 
-if __name__ == '__main__':
+def make_app():
     options.database_url = 'sqlite+pysqlite:///sqlite.db'
     session_factory = make_session_factory(options.database_url)
     fake_data(session_factory)
 
-    Application([
+    return Application([
         (r'/', IndexHandler),
         (r'/jobs', JobHandler),
         (r'/user', UserHandler),
-        (r'/token', TokenHandler),
-        (r'/user/reg', UserRegHandler),
-        (r'/user/login', UserLoginHandler),
-        (r'/user/logout', UserLogoutHandler),
+        (r'/user/(.*)', UserInfoHandler),
+        (r'/token', TokenHandler)
     ], session_factory=session_factory, cookie_secret="61oETzKXQAGaYdghdhgfhfhfg",
         autoreload=True
-    ).listen(8888)
+    )
+
+
+if __name__ == '__main__':
+    make_app().listen(8888)
 
     IOLoop.current().start()

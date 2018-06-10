@@ -76,6 +76,7 @@ class Question(DeclarativeBase, MyMixin):
 
     def get_info(self):
         return {
+            'id': self.uuid,
             "context": self.context,
             "keywords": self.keywords
         }

@@ -18,6 +18,21 @@ from models import Question
 from handlers import BaseHandler
 
 
+class QuestionDetailHandler(BaseHandler, SessionMixin):
+    @coroutine
+    def get(self, question_id):
+        with self.make_session() as session:
+            question = session.query(Question).filter_by(
+                uuid=question_id).first()
+            if not question:
+                self.set_status(404)
+                self.write({"error": "Question not found"})
+                return
+            self.write({
+                "question": question.get_info()
+            })
+
+
 class QuestionHandler(BaseHandler, SessionMixin):
 
     @coroutine
@@ -36,7 +51,7 @@ class QuestionHandler(BaseHandler, SessionMixin):
         body = json.loads(self.request.body)
         question = body.get("question")
 
-        keywords = question['username']
+        keywords = question['keywords']
         context = question['context']
 
         question = Question(

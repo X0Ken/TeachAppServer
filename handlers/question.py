@@ -14,8 +14,7 @@ from tornado_sqlalchemy import make_session_factory
 
 from fake import fake_data
 from models import DeclarativeBase
-from models import User
-from models import Job
+from models import Question
 from handlers import BaseHandler
 
 
@@ -23,8 +22,29 @@ class QuestionHandler(BaseHandler, SessionMixin):
 
     @coroutine
     def get(self):
-        self.finish()
+        with self.make_session() as session:
+            questions = session.query(Question).all()
+            self.write({
+                "questions": [
+                    q.get_info() for q in questions
+                ]
+            })
 
     @coroutine
     def post(self):
-        self.finish()
+        question_id = uuid.uuid4().hex
+        body = json.loads(self.request.body)
+        question = body.get("question")
+
+        keywords = question['username']
+        context = question['context']
+
+        question = Question(
+            uuid=question_id, keywords=keywords, context=context)
+
+        with self.make_session() as session:
+            session.add(question)
+        with self.make_session() as session:
+            question = session.query(Question).filter_by(
+                uuid=question_id).first()
+            self.write({"question": question.get_info()})

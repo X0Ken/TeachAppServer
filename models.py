@@ -42,21 +42,18 @@ class User(DeclarativeBase, MyMixin):
     role = Column(String(255))
     token_id = Column(String(255))
 
-    def get_user_info(self):
+    def get_info(self):
         return {
-            "user": {
-                "id": self.uuid,
-                "username": self.username,
-            }
+            "id": self.uuid,
+            "username": self.username,
         }
 
     def get_token_info(self):
         return {
-            "token": {
-                "id": self.token_id,
-                "username": self.username,
-                "role": self.role,
-            }
+            "token_id": self.token_id,
+            "username": self.username,
+            "id": self.uuid,
+            "role": self.role,
         }
 
 
@@ -76,3 +73,9 @@ class Question(DeclarativeBase, MyMixin):
 
     context = Column(String(255))
     keywords = Column(String(255))
+
+    def get_info(self):
+        return {
+            "context": self.context,
+            "keywords": self.keywords
+        }

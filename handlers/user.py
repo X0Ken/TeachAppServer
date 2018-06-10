@@ -13,10 +13,7 @@ from tornado_sqlalchemy import as_future
 from tornado_sqlalchemy import declarative_base
 from tornado_sqlalchemy import make_session_factory
 
-from fake import fake_data
-from models import DeclarativeBase
 from models import User
-from models import Job
 from handlers import BaseHandler
 
 
@@ -26,7 +23,7 @@ class UserInfoHandler(BaseHandler, SessionMixin):
     def get(self, user_id):
         with self.make_session() as session:
             user = session.query(User).filter_by(uuid=user_id).first()
-            self.write(user.get_user_info())
+            self.write({"user": user.get_info()})
 
 
 class UserHandler(BaseHandler, SessionMixin):
@@ -48,7 +45,7 @@ class UserHandler(BaseHandler, SessionMixin):
             session.add(user)
         with self.make_session() as session:
             user = session.query(User).filter_by(uuid=user_id).first()
-            self.write(user.get_token_info())
+            self.write({"token": user.get_token_info()})
 
 
 class TokenHandler(BaseHandler, SessionMixin):
@@ -74,7 +71,7 @@ class TokenHandler(BaseHandler, SessionMixin):
 
         with self.make_session() as session:
             user = session.query(User).filter_by(uuid=user_id).first()
-            self.write(user.get_token_info())
+            self.write({"token": user.get_token_info()})
 
     def auth_token(self, auth):
         token_id = auth.get('token_id')
@@ -89,7 +86,7 @@ class TokenHandler(BaseHandler, SessionMixin):
                 })
                 return
 
-            self.write(user.get_token_info())
+            self.write({"token": user.get_token_info()})
 
     @coroutine
     def post(self):

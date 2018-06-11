@@ -1,25 +1,12 @@
 import json
 import uuid
+import copy
 
 from models import User
 from tests import TestBase
 
 
 class TestUser(TestBase):
-    def add_user(self):
-        session = self.session
-        user = User(uuid=uuid.uuid4().hex, username=uuid.uuid4().hex,
-                    password="password", role="user", token_id=uuid.uuid4().hex)
-        user_info = user.get_token_info()
-        session.add(user)
-        session.commit()
-        return user_info
-
-    def remove_user(self, user_id):
-        session = self.session
-        user = session.query(User).filter_by(uuid=user_id).first()
-        session.delete(user)
-        session.commit()
 
     def test_user_get(self):
         response = self.fetch('/users/af71d42c091c426eb33982bf83779a75')
@@ -80,4 +67,19 @@ class TestUser(TestBase):
             json.loads(response.body).keys()))
         self.assertListEqual(sorted(res_body['token'].keys()),
                              sorted(json.loads(response.body)['token'].keys()))
+        self.remove_user(user['id'])
+
+    def test_user_property(self):
+        user = self.add_user()
+        req_body = {
+            "property": {
+                "a": "a",
+                "b": "b",
+            }
+        }
+        res_body = copy.deepcopy(req_body)
+        response = self.fetch('/users/{}/property'.format(user['id']), method="POST",
+                              body=json.dumps(req_body))
+        self.assertEqual(response.code, 200)
+        self.assertDictEqual(req_body, res_body)
         self.remove_user(user['id'])

@@ -10,9 +10,11 @@ from tornado_sqlalchemy import (SessionMixin, as_future, declarative_base,
                                 make_session_factory)
 
 from fake import fake_data
-from handlers.user import TokenHandler, UserHandler, UserInfoHandler
+from handlers.user import TokenHandler, UserHandler, UserDetailHandler, UserPropertyHandler
 from handlers.question import QuestionHandler, QuestionDetailHandler
-from handlers.job import JobDetailHandler, JobHandler
+from handlers.teacher import JobDetailHandler, JobHandler
+from handlers.teacher import TeacherHandler, TeacherDetailHandler
+
 from models import DeclarativeBase, Job, User
 
 
@@ -43,12 +45,15 @@ def make_app():
     return Application([
         (r'/', IndexHandler),
         (r'/jobs', JobHandler),
-        (r'/jobs/(.*)', JobDetailHandler),
+        (r'/jobs/([0-9a-f]{32})', JobDetailHandler),
+        (r'/teachers', TeacherHandler),
+        (r'/teachers/([0-9a-f]{32})', TeacherDetailHandler),
         (r'/users', UserHandler),
-        (r'/users/(.*)', UserInfoHandler),
+        (r'/users/([0-9a-f]{32})', UserDetailHandler),
+        (r'/users/([0-9a-f]{32})/property', UserPropertyHandler),
         (r'/token', TokenHandler),
         (r'/questions', QuestionHandler),
-        (r'/questions/(.*)', QuestionDetailHandler)
+        (r'/questions/([0-9a-f]{32})', QuestionDetailHandler)
     ], session_factory=session_factory, cookie_secret="61oETzKXQAGaYdghdhgfhfhfg",
         autoreload=True
     )

@@ -8,7 +8,7 @@ def fake_user(session):
         uuid="af71d42c091c426eb33982bf83779a75").first()
     if not user:
         user = User(uuid="af71d42c091c426eb33982bf83779a75", username="testuser",
-                    password="password", role="user")
+                    password="password", role="user", token_id='96da3aee6b6e47b98f08664abfbc599a')
         session.add(user)
     user = session.query(User).filter_by(
         uuid="370707741a0c41ef9d0e6a7d1fe2c043").first()

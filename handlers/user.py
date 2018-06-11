@@ -13,11 +13,11 @@ from tornado_sqlalchemy import as_future
 from tornado_sqlalchemy import declarative_base
 from tornado_sqlalchemy import make_session_factory
 
-from models import User
+from models import User, UserProperty
 from handlers import BaseHandler
 
 
-class UserInfoHandler(BaseHandler, SessionMixin):
+class UserDetailHandler(BaseHandler, SessionMixin):
 
     @coroutine
     def get(self, user_id):
@@ -55,7 +55,24 @@ class UserPropertyHandler(BaseHandler, SessionMixin):
 
     @coroutine
     def post(self, user_id):
-        self.write({"token": 'dd'})
+        body = json.loads(self.request.body)
+        pros_new = body.get("property")
+        with self.make_session() as session:
+            for k, v in pros_new.items():
+                pro = session.query(UserProperty).filter_by(
+                    user_id=user_id, property=k).first()
+                if pro:
+                    pro.value = v
+                else:
+                    pro = UserProperty(property=k, value=v)
+                    session.add(pro)
+            session.commit()
+            pros = session.query(UserProperty).filter_by(
+                user_id=user_id).all()
+            r = {}
+            for pro in pros:
+                r[pro.property] = pro.value
+            self.write({"property": r})
 
     @coroutine
     def put(self, user_id):

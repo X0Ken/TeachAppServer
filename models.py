@@ -68,6 +68,20 @@ class Job(DeclarativeBase, MyMixin):
     subject = Column(String(255))
     time = Column(String(255))
 
+    def get_info(self):
+        return {
+            "id": self.uuid,
+            "method": self.method,
+            "gender": self.gender,
+            "school": self.school,
+            "highest_education": self.highest_education,
+            "pay": self.pay,
+            "region": self.region,
+            "subject": self.subject,
+            "time": self.time,
+            "create_at": self.create_at.strftime('%Y-%m-%d %H:%M:%S')
+        }
+
 
 class Question(DeclarativeBase, MyMixin):
 

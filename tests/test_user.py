@@ -22,7 +22,7 @@ class TestUser(TestBase):
         session.commit()
 
     def test_user_get(self):
-        response = self.fetch('/user/af71d42c091c426eb33982bf83779a75')
+        response = self.fetch('/users/af71d42c091c426eb33982bf83779a75')
         self.assertEqual(response.code, 200)
         body = {
             "user": {

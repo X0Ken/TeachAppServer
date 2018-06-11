@@ -19,28 +19,25 @@ from models import Job
 from handlers import BaseHandler
 
 
+class JobDetailHandler(BaseHandler, SessionMixin):
+
+    @coroutine
+    def get(self, job_id):
+        with self.make_session() as session:
+            job = session.query(Job).filter_by(uuid=job_id).first()
+            self.write({
+                "job": job.get_info()
+            })
+
+
 class JobHandler(BaseHandler, SessionMixin):
-    def get_job(self, job):
-        return {
-            "uuid": job.uuid,
-            "method": job.method,
-            "gender": job.gender,
-            "school": job.school,
-            "highest_education": job.highest_education,
-            "pay": job.pay,
-            "region": job.region,
-            "subject": job.subject,
-            "time": job.time,
-            "create_at": job.create_at.strftime('%Y-%m-%d %H:%M:%S')
-        }
 
     @coroutine
     def get(self):
         with self.make_session() as session:
             jobs = session.query(Job).filter_by(deleted=0).all()
-            jobs = (self.get_job(job) for job in jobs)
             self.write({
-                "jobs": [job for job in jobs]
+                "jobs": [job.get_info() for job in jobs]
             })
 
     @coroutine
@@ -53,4 +50,4 @@ class JobHandler(BaseHandler, SessionMixin):
             session.add(job)
         with self.make_session() as session:
             job = session.query(Job).filter_by(uuid=job_uuid).first()
-            self.write({"Job": self.get_job(job)})
+            self.write({"job": job.get_info()})

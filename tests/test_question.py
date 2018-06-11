@@ -16,6 +16,7 @@ class TestQuestion(TestBase):
         session = self.session
         q = Question(uuid=quesion_id)
         info = q.get_info()
+        session.add(q)
         session.commit()
         return info
 
@@ -27,7 +28,7 @@ class TestQuestion(TestBase):
 
     def test_list(self):
         count = self.get_count()
-        response = self.fetch('/question')
+        response = self.fetch('/questions')
         self.assertEqual(response.code, 200)
         self.assertEqual(len(json.loads(response.body)['questions']), count)
 
@@ -40,7 +41,7 @@ class TestQuestion(TestBase):
         }
         res_body = copy.deepcopy(req_body)
         res_body['question']['id'] = 'id'
-        response = self.fetch('/question', method="POST",
+        response = self.fetch('/questions', method="POST",
                               body=json.dumps(req_body))
         self.assertEqual(response.code, 200)
         self.assertListEqual(sorted(res_body['question'].keys()),
@@ -51,8 +52,8 @@ class TestQuestion(TestBase):
         q_id = uuid.uuid4().hex
         q = self.add(q_id)
         print(q)
-        response = self.fetch('/question/{}'.format(q['id']))
+        response = self.fetch('/questions/{}'.format(q['id']))
         self.assertEqual(response.code, 200)
-        self.assertListEqual(sorted('keywords', 'id', 'context', ),
+        self.assertListEqual(sorted(['keywords', 'id', 'context']),
                              sorted(json.loads(response.body)['question'].keys()))
         self.delete(json.loads(response.body)['question']['id'])

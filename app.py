@@ -12,10 +12,10 @@ from tornado_sqlalchemy import (SessionMixin, as_future, declarative_base,
 from fake import fake_data
 from handlers.user import TokenHandler, UserHandler, UserDetailHandler, UserPropertyHandler
 from handlers.question import QuestionHandler, QuestionDetailHandler
-from handlers.teacher import JobDetailHandler, JobHandler
-from handlers.teacher import TeacherHandler, TeacherDetailHandler
+from handlers.teacher import TeacherDetailHandler, TeacherHandler
+from handlers.teacher import TeacherJobHandler, TeacherJobDetailHandler
 
-from models import DeclarativeBase, Job, User
+from models import DeclarativeBase, TeacherJob, User
 
 
 define("database_url",
@@ -44,10 +44,10 @@ def make_app():
 
     return Application([
         (r'/', IndexHandler),
-        (r'/jobs', JobHandler),
-        (r'/jobs/([0-9a-f]{32})', JobDetailHandler),
         (r'/teachers', TeacherHandler),
         (r'/teachers/([0-9a-f]{32})', TeacherDetailHandler),
+        (r'/teacherjobs', TeacherJobHandler),
+        (r'/teacherjobs/([0-9a-f]{32})', TeacherJobDetailHandler),
         (r'/users', UserHandler),
         (r'/users/([0-9a-f]{32})', UserDetailHandler),
         (r'/users/([0-9a-f]{32})/property', UserPropertyHandler),

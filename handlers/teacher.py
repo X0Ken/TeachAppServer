@@ -15,43 +15,61 @@ from tornado_sqlalchemy import make_session_factory
 
 from models import DeclarativeBase
 from models import User
-from models import Job
+from models import TeacherJob
 from models import Teacher
 from handlers import BaseHandler
 
 
-class JobDetailHandler(BaseHandler, SessionMixin):
+class TeacherJobDetailHandler(BaseHandler, SessionMixin):
 
     @coroutine
     def get(self, job_id):
         with self.make_session() as session:
-            job = session.query(Job).filter_by(uuid=job_id).first()
+            job = session.query(TeacherJob).filter_by(uuid=job_id).first()
             self.write({
-                "job": job.get_info()
+                "teacherjob": job.get_info()
             })
 
 
-class JobHandler(BaseHandler, SessionMixin):
+class TeacherJobHandler(BaseHandler, SessionMixin):
 
     @coroutine
     def get(self):
         with self.make_session() as session:
-            jobs = session.query(Job).filter_by(deleted=0).all()
+            jobs = session.query(TeacherJob).filter_by(deleted=0).all()
             self.write({
-                "jobs": [job.get_info() for job in jobs]
+                "teacherjobs": [job.get_info() for job in jobs]
             })
 
     @coroutine
     def post(self):
+        token_id = self.request.headers.get('token-id')
+        print("Headers: {}".format(self.request.headers))
+        print("Token-Id: {}".format(token_id))
+        if not token_id:
+            self.set_status(401)
+            self.write({"error": "Not auth!"})
+            return
+
+        offer_user_id = None
+
         job_uuid = uuid.uuid4().hex
         body = json.loads(self.request.body)
-        job = body.get("job")
+        job = body.get("teacherjob")
         with self.make_session() as session:
-            job = Job(uuid=job_uuid, **job)
+            user = session.query(User).filter_by(token_id=token_id).first()
+            if user:
+                offer_user_id = user.uuid
+            else:
+                self.set_status(401)
+                self.write({"error": "Not auth!"})
+                return
+
+            job = TeacherJob(uuid=job_uuid, offer_user_id=offer_user_id, **job)
             session.add(job)
         with self.make_session() as session:
-            job = session.query(Job).filter_by(uuid=job_uuid).first()
-            self.write({"job": job.get_info()})
+            job = session.query(TeacherJob).filter_by(uuid=job_uuid).first()
+            self.write({"teacherjob": job.get_info()})
 
 
 class TeacherDetailHandler(BaseHandler, SessionMixin):
@@ -61,9 +79,14 @@ class TeacherDetailHandler(BaseHandler, SessionMixin):
         with self.make_session() as session:
             teacher = session.query(Teacher).filter_by(
                 uuid=teacher_id).first()
-            self.write({
-                "teacher": teacher.get_info()
-            })
+            if teacher:
+                self.write({
+                    "teacher": teacher.get_info()
+                })
+            else:
+                self.set_status(404)
+                self.write({"error": "Not found!"})
+                return
 
 
 class TeacherHandler(BaseHandler, SessionMixin):
@@ -97,6 +120,7 @@ class TeacherHandler(BaseHandler, SessionMixin):
                 self.set_status(401)
                 self.write({"error": "Not auth!"})
                 return
+
             teacher = session.query(Teacher).filter_by(uuid=teacher_id).first()
             if teacher:
                 for k, v in teacher_info.items():

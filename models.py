@@ -69,7 +69,7 @@ class UserProperty(DeclarativeBase, ObjectMixin):
     value = Column(String(255))
 
 
-class Job(DeclarativeBase, ObjectMixin):
+class TeacherJob(DeclarativeBase, ObjectMixin):
 
     method = Column(String(255))
     gender = Column(String(255))
@@ -79,6 +79,7 @@ class Job(DeclarativeBase, ObjectMixin):
     region = Column(String(255))
     subject = Column(String(255))
     time = Column(String(255))
+    offer_user_id = Column(String(255))
 
     def get_info(self):
         return {
@@ -91,6 +92,7 @@ class Job(DeclarativeBase, ObjectMixin):
             "region": self.region,
             "subject": self.subject,
             "time": self.time,
+            "offer_user_id": self.offer_user_id,
             "create_at": self.create_at.strftime('%Y-%m-%d %H:%M:%S')
         }
 

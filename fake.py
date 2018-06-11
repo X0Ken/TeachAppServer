@@ -1,6 +1,6 @@
 from models import DeclarativeBase
 from models import User
-from models import Job
+from models import TeacherJob
 
 
 def fake_user(session):

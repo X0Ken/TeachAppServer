@@ -17,7 +17,7 @@ AVALIBLE_GENDER = ['male ', 'female']
 AVALIBLE_EDUCATION = ['Undergraduate', 'master', 'PhD']
 
 
-class MyMixin(object):
+class ObjectMixin(object):
 
     @classmethod
     @declared_attr
@@ -35,7 +35,7 @@ class MyMixin(object):
     delete_at = Column(DateTime, nullable=True)
 
 
-class User(DeclarativeBase, MyMixin):
+class User(DeclarativeBase, ObjectMixin):
 
     username = Column(String(255), unique=True)
     password = Column(String(255))
@@ -57,7 +57,14 @@ class User(DeclarativeBase, MyMixin):
         }
 
 
-class Job(DeclarativeBase, MyMixin):
+class UserInfo(DeclarativeBase, ObjectMixin):
+
+    user_id = Column(String(255))
+    property = Column(String(255))
+    value = Column(String(255))
+
+
+class Job(DeclarativeBase, ObjectMixin):
 
     method = Column(String(255))
     gender = Column(String(255))
@@ -83,7 +90,7 @@ class Job(DeclarativeBase, MyMixin):
         }
 
 
-class Question(DeclarativeBase, MyMixin):
+class Question(DeclarativeBase, ObjectMixin):
 
     context = Column(String(255))
     keywords = Column(String(255))
@@ -94,3 +101,10 @@ class Question(DeclarativeBase, MyMixin):
             "context": self.context,
             "keywords": self.keywords
         }
+
+
+class Order(DeclarativeBase, ObjectMixin):
+
+    user1 = Column(String(255))
+    user2 = Column(String(255))
+    pay = Column(String(255))

@@ -48,6 +48,24 @@ class UserHandler(BaseHandler, SessionMixin):
             self.write({"token": user.get_token_info()})
 
 
+class UserPropertyHandler(BaseHandler, SessionMixin):
+    @coroutine
+    def get(self, user_id):
+        self.write({"token": 'dd'})
+
+    @coroutine
+    def post(self, user_id):
+        self.write({"token": 'dd'})
+
+    @coroutine
+    def put(self, user_id):
+        self.write({"token": 'dd'})
+
+    @coroutine
+    def delete(self, user_id):
+        self.write({"token": 'dd'})
+
+
 class TokenHandler(BaseHandler, SessionMixin):
 
     def auth_password(self, auth):

@@ -24,7 +24,6 @@ def default_uuid():
 
 class ObjectMixin(object):
 
-    @classmethod
     @declared_attr
     def __tablename__(cls):
         return cls.__name__.lower()

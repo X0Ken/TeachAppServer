@@ -133,12 +133,14 @@ class Question(DeclarativeBase, ObjectMixin):
 
     context = Column(String(255))
     keywords = Column(String(255))
+    pay = Column(String(255))
 
     def get_info(self):
         return {
             'id': self.uuid,
             "context": self.context,
-            "keywords": self.keywords
+            "keywords": self.keywords,
+            "pay": self.pay
         }
 
 

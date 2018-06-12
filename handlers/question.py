@@ -53,9 +53,10 @@ class QuestionHandler(BaseHandler, SessionMixin):
 
         keywords = question['keywords']
         context = question['context']
+        pay = question['pay']
 
         question = Question(
-            uuid=question_id, keywords=keywords, context=context)
+            uuid=question_id, keywords=keywords, context=context, pay=pay)
 
         with self.make_session() as session:
             session.add(question)

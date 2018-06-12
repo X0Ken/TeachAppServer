@@ -37,6 +37,7 @@ class TestQuestion(TestBase):
             "question": {
                 "keywords": "keywords",
                 "context": 'context',
+                "pay": 'pay',
             }
         }
         res_body = copy.deepcopy(req_body)
@@ -54,6 +55,6 @@ class TestQuestion(TestBase):
         print(q)
         response = self.fetch('/questions/{}'.format(q['id']))
         self.assertEqual(response.code, 200)
-        self.assertListEqual(sorted(['keywords', 'id', 'context']),
+        self.assertListEqual(sorted(['keywords', 'id', 'context', 'pay']),
                              sorted(json.loads(response.body)['question'].keys()))
         self.delete(json.loads(response.body)['question']['id'])

@@ -48,7 +48,7 @@ class QuestionHandler(BaseHandler, SessionMixin):
     @coroutine
     def post(self):
         question_id = uuid.uuid4().hex
-        body = json.loads(self.request.body)
+        body = json.loads(self.request.body.decode('utf-8'))
         question = body.get("question")
 
         keywords = question['keywords']

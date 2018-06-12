@@ -32,7 +32,7 @@ class UserHandler(BaseHandler, SessionMixin):
     def post(self):
         user_id = uuid.uuid4().hex
         token_id = uuid.uuid4().hex
-        body = json.loads(self.request.body)
+        body = json.loads(self.request.body.decode('utf-8'))
         user = body.get("register")
 
         username = user['username']
@@ -55,7 +55,7 @@ class UserPropertyHandler(BaseHandler, SessionMixin):
 
     @coroutine
     def post(self, user_id):
-        body = json.loads(self.request.body)
+        body = json.loads(self.request.body.decode('utf-8'))
         pros_new = body.get("property")
         with self.make_session() as session:
             for k, v in pros_new.items():
@@ -125,7 +125,7 @@ class TokenHandler(BaseHandler, SessionMixin):
 
     @coroutine
     def post(self):
-        body = json.loads(self.request.body)
+        body = json.loads(self.request.body.decode('utf-8'))
         auth = body.get("auth")
         auth_type = auth.get('type')
         if auth_type == "password":

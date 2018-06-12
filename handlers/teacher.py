@@ -44,7 +44,6 @@ class TeacherJobHandler(BaseHandler, SessionMixin):
     @coroutine
     def post(self):
         token_id = self.request.headers.get('token-id')
-        print("Headers: {}".format(self.request.headers))
         print("Token-Id: {}".format(token_id))
         if not token_id:
             self.set_status(401)
@@ -54,7 +53,7 @@ class TeacherJobHandler(BaseHandler, SessionMixin):
         offer_user_id = None
 
         job_uuid = uuid.uuid4().hex
-        body = json.loads(self.request.body)
+        body = json.loads(self.request.body.decode('utf-8'))
         job = body.get("teacherjob")
         with self.make_session() as session:
             user = session.query(User).filter_by(token_id=token_id).first()
@@ -79,9 +78,14 @@ class TeacherDetailHandler(BaseHandler, SessionMixin):
         with self.make_session() as session:
             teacher = session.query(Teacher).filter_by(
                 uuid=teacher_id).first()
-            if teacher:
+            user = session.query(User).filter_by(uuid=teacher_id).first()
+            if teacher and user:
+                teacher_info = teacher.get_info()
+                teacher_info['username'] = user.username
+                teacher_info['success_order'] = 10
+                teacher_info['good_evaluate_v'] = 0.95
                 self.write({
-                    "teacher": teacher.get_info()
+                    "teacher": teacher_info
                 })
             else:
                 self.set_status(404)
@@ -102,7 +106,6 @@ class TeacherHandler(BaseHandler, SessionMixin):
     @coroutine
     def post(self):
         token_id = self.request.headers.get('token-id')
-        print("Headers: {}".format(self.request.headers))
         print("Token-Id: {}".format(token_id))
         if not token_id:
             self.set_status(401)
@@ -110,7 +113,7 @@ class TeacherHandler(BaseHandler, SessionMixin):
             return
 
         teacher_id = None
-        body = json.loads(self.request.body)
+        body = json.loads(self.request.body.decode('utf-8'))
         teacher_info = body.get("teacher")
         with self.make_session() as session:
             user = session.query(User).filter_by(token_id=token_id).first()

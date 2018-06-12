@@ -29,11 +29,13 @@ class TestTeacher(TestBase):
 
     def test_get(self):
         j_id = uuid.uuid4().hex
+        self.add_user(j_id)
         j = self.add(j_id)
         response = self.fetch('/teachers/{}'.format(j['user_id']))
         self.assertEqual(response.code, 200)
         self.assertListEqual(sorted(['create_at', 'gender', 'highest_education', 'method', 'idcard', 'self_evaluate',
-                                     'pay', 'region', 'school', 'school_subject', 'subject', 'time', 'user_id']),
+                                     'pay', 'region', 'school', 'school_subject', 'subject', 'time', 'user_id', 'username',
+                                     'success_order', 'good_evaluate_v']),
                              sorted(json.loads(response.body)['teacher'].keys()))
         self.delete(json.loads(response.body)['teacher']['user_id'])
 

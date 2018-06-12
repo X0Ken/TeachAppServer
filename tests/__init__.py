@@ -12,9 +12,11 @@ class TestBase(AsyncHTTPTestCase):
         self.session = application.settings['session_factory'].make_session()
         return app.make_app()
 
-    def add_user(self):
+    def add_user(self, user_id=None):
+        if not user_id:
+            user_id = uuid.uuid4().hex
         session = self.session
-        user = User(uuid=uuid.uuid4().hex, username=uuid.uuid4().hex,
+        user = User(uuid=user_id, username=uuid.uuid4().hex,
                     password="password", role="user", token_id=uuid.uuid4().hex)
         user_info = user.get_token_info()
         session.add(user)

@@ -73,8 +73,8 @@ def fake_question(session):
         info = {
             "uuid": "af71d42c091c426eb33982bf83779b77",
             "pay": "66",
-            "context": "第一个问题",
-            "keywords": "fsdf"
+            "context": "怎么做红烧肉",
+            "keywords": "厨艺"
         }
         q = Question(**info)
         session.add(q)
@@ -85,8 +85,8 @@ def fake_question(session):
         info = {
             "uuid": "af71d42c092c426eb33982bf83779b77",
             "pay": "66",
-            "context": "第二个问题",
-            "keywords": "fsdf"
+            "context": "怎么计算三角形面积",
+            "keywords": "数学"
         }
         q = Question(**info)
         session.add(q)

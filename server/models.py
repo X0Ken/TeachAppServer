@@ -1,14 +1,12 @@
-from datetime import datetime
 import uuid
+from datetime import datetime
 
-from sqlalchemy import BigInteger
 from sqlalchemy import Column
 from sqlalchemy import DateTime
 from sqlalchemy import Integer
 from sqlalchemy import String
 from sqlalchemy.ext.declarative import declared_attr
 from tornado_sqlalchemy import declarative_base
-
 
 DeclarativeBase = declarative_base()
 
@@ -31,16 +29,20 @@ class ObjectMixin(object):
     # __table_args__ = {'mysql_engine': 'InnoDB'}
     # __mapper_args__ = {'always_refresh': True}
 
-    uuid = Column(String(32), primary_key=True, default=default_uuid)
     deleted = Column(Integer, default=0)
     hidded = Column(Integer, default=0)
     create_at = Column(DateTime, default=datetime.now)
     update_at = Column(DateTime, nullable=True)
     delete_at = Column(DateTime, nullable=True)
 
+    def __init__(self, **kwargs):
+        for k, v in kwargs:
+            setattr(self, k, v)
+
 
 class User(DeclarativeBase, ObjectMixin):
 
+    id = Column(Integer, primary_key=True)
     username = Column(String(255), unique=True)
     password = Column(String(255))
     role = Column(String(255))
@@ -48,7 +50,7 @@ class User(DeclarativeBase, ObjectMixin):
 
     def get_info(self):
         return {
-            "id": self.uuid,
+            "id": self.id,
             "username": self.username,
         }
 
@@ -56,33 +58,35 @@ class User(DeclarativeBase, ObjectMixin):
         return {
             "token_id": self.token_id,
             "username": self.username,
-            "id": self.uuid,
+            "id": self.id,
             "role": self.role,
         }
 
 
 class UserProperty(DeclarativeBase, ObjectMixin):
 
-    user_id = Column(String(255))
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer)
     property = Column(String(255))
     value = Column(String(255))
 
 
 class TeacherJob(DeclarativeBase, ObjectMixin):
 
+    id = Column(Integer, primary_key=True)
     method = Column(String(255))
     gender = Column(String(255))
     school = Column(String(255))
     highest_education = Column(String(255))
-    pay = Column(String(255))
+    pay = Column(Integer)
     region = Column(String(255))
     subject = Column(String(255))
     time = Column(String(255))
-    offer_user_id = Column(String(255))
+    provider = Column(Integer)
 
     def get_info(self):
         return {
-            "id": self.uuid,
+            "id": self.id,
             "method": self.method,
             "gender": self.gender,
             "school": self.school,
@@ -91,13 +95,14 @@ class TeacherJob(DeclarativeBase, ObjectMixin):
             "region": self.region,
             "subject": self.subject,
             "time": self.time,
-            "offer_user_id": self.offer_user_id,
+            "provider": self.provider,
             "create_at": self.create_at.strftime('%Y-%m-%d %H:%M:%S')
         }
 
 
 class Teacher(DeclarativeBase, ObjectMixin):
 
+    id = Column(Integer, primary_key=True)
     method = Column(String(255))
     idcard = Column(String(255))
     gender = Column(String(255))
@@ -112,7 +117,7 @@ class Teacher(DeclarativeBase, ObjectMixin):
 
     def get_info(self):
         return {
-            "user_id": self.uuid,
+            "id": self.id,
             "idcard": self.idcard,
             "method": self.method,
             "gender": self.gender,
@@ -130,21 +135,46 @@ class Teacher(DeclarativeBase, ObjectMixin):
 
 class Question(DeclarativeBase, ObjectMixin):
 
-    context = Column(String(255))
+    id = Column(Integer, primary_key=True)
+    content = Column(String(255))
     keywords = Column(String(255))
-    pay = Column(String(255))
+    pay = Column(Integer)
+    asker = Column(Integer)
+    fixed = Column(Integer, default=0)
 
     def get_info(self):
         return {
-            'id': self.uuid,
-            "context": self.context,
+            'id': self.id,
+            "content": self.content,
             "keywords": self.keywords,
-            "pay": self.pay
+            "pay": self.pay,
+            "asker": self.asker,
+            "fixed": self.fixed
         }
 
 
 class Order(DeclarativeBase, ObjectMixin):
 
-    user1 = Column(String(255))
-    user2 = Column(String(255))
-    pay = Column(String(255))
+    id = Column(Integer, primary_key=True)
+    # payer -> payee
+    payer = Column(Integer)
+    payee = Column(Integer)
+    amount = Column(Integer)  # real =  pay / 100
+
+
+class Msg(DeclarativeBase, ObjectMixin):
+
+    id = Column(Integer, primary_key=True)
+    sender = Column(Integer)
+    receiver = Column(Integer)
+    content = Column(String(255))
+    unread = Column(Integer, default=1)
+    
+    def get_info(self):
+        return {
+            'id': self.id,
+            'sender': self.sender,
+            'receiver': self.receiver,
+            'content': self.content,
+            'unread': self.unread
+        }

@@ -1,20 +1,19 @@
-import json
-import uuid
 import copy
+import json
 
-from models import User
-from tests import TestBase
+from server.test import TestBase
 
 
 class TestUser(TestBase):
 
     def test_user_get(self):
-        response = self.fetch('/users/af71d42c091c426eb33982bf83779a75')
+        user = self.get_user()
+        response = self.fetch('/api/users/{}'.format(user.id))
         self.assertEqual(response.code, 200)
         body = {
             "user": {
-                "id": "af71d42c091c426eb33982bf83779a75",
-                "username": "testuser"
+                "id": user.id,
+                "username": user.username
             }
         }
         self.assertDictEqual(json.loads(response.body), body)
@@ -23,7 +22,7 @@ class TestUser(TestBase):
         req_body = {
             "auth": {
                 "type": "password",
-                "username": "testuser",
+                "username": "user",
                 "password": "password",
             }
         }
@@ -35,7 +34,7 @@ class TestUser(TestBase):
                 'username': 'testuser'
             }
         }
-        response = self.fetch('/token', method="POST",
+        response = self.fetch('/api/token', method="POST",
                               body=json.dumps(req_body))
         self.assertEqual(response.code, 200)
         self.assertListEqual(list(res_body.keys()), list(
@@ -44,12 +43,12 @@ class TestUser(TestBase):
                              sorted(json.loads(response.body)['token'].keys()))
 
     def test_token_by_token(self):
-        user = self.add_user()
+        user = self.get_user()
 
         req_body = {
             "auth": {
                 "type": "token",
-                "token_id": user['token_id'],
+                "token_id": user.token_id,
             }
         }
         res_body = {
@@ -60,17 +59,16 @@ class TestUser(TestBase):
                 'id': 'id'
             }
         }
-        response = self.fetch('/token', method="POST",
+        response = self.fetch('/api/token', method="POST",
                               body=json.dumps(req_body))
         self.assertEqual(response.code, 200)
         self.assertListEqual(list(res_body.keys()), list(
             json.loads(response.body).keys()))
         self.assertListEqual(sorted(res_body['token'].keys()),
                              sorted(json.loads(response.body)['token'].keys()))
-        self.remove_user(user['id'])
 
     def test_user_property(self):
-        user = self.add_user()
+        user = self.get_user()
         req_body = {
             "property": {
                 "a": "a",
@@ -78,8 +76,9 @@ class TestUser(TestBase):
             }
         }
         res_body = copy.deepcopy(req_body)
-        response = self.fetch('/users/{}/property'.format(user['id']), method="POST",
-                              body=json.dumps(req_body))
+        response = self.fetch('/api/users/{}/property'.format(user.id),
+                              method="POST",
+                              body=json.dumps(req_body),
+                              headers={"token-id": user.token_id})
         self.assertEqual(response.code, 200)
         self.assertDictEqual(req_body, res_body)
-        self.remove_user(user['id'])

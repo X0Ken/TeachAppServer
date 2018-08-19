@@ -1,4 +1,7 @@
 .vscode
 *.db
+*.ini
 __pycache__
 .pytest_cache
+.idea
+venv

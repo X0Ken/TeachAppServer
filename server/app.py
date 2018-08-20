@@ -8,7 +8,8 @@ from tornado_sqlalchemy import SessionMixin
 from tornado_sqlalchemy import make_session_factory
 
 from server.fake import insert_fake_data
-from server.handlers import api_handers
+from server.handlers.admin import admin_handers
+from server.handlers.api import api_handers
 from server.models import DeclarativeBase
 
 define("database_url",
@@ -37,6 +38,7 @@ def make_app():
         (r'/', IndexHandler),
     ]
     handlers.extend(api_handers)
+    handlers.extend(admin_handers)
     return Application(
         handlers
         , session_factory=session_factory,

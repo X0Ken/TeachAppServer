@@ -3,8 +3,8 @@ import uuid
 
 from tornado.gen import coroutine
 
-from server.handlers.api import BaseAPIHandler
-from server.handlers.api import auth_require
+from server.handlers.api.base import BaseAPIHandler
+from server.handlers.api.base import auth_require
 from server.models import User
 from server.models import UserProperty
 

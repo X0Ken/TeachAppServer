@@ -4,8 +4,8 @@ from sqlalchemy import and_
 from sqlalchemy import or_
 from tornado.gen import coroutine
 
-from server.handlers.api import BaseAPIHandler
-from server.handlers.api import auth_require
+from server.handlers.api.base import BaseAPIHandler
+from server.handlers.api.base import auth_require
 from server.models import Msg
 
 

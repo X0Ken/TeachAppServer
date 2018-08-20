@@ -1,59 +1,27 @@
-from functools import wraps
+from server.handlers.api.msg import UnreadMsgHandler
+from server.handlers.api.msg import UserMsgHandler
+from server.handlers.api.question import QuestionDetailHandler
+from server.handlers.api.question import QuestionHandler
+from server.handlers.api.teacher import TeacherDetailHandler
+from server.handlers.api.teacher import TeacherHandler
+from server.handlers.api.teacher import TeacherJobDetailHandler
+from server.handlers.api.teacher import TeacherJobHandler
+from server.handlers.api.user import TokenHandler
+from server.handlers.api.user import UserDetailHandler
+from server.handlers.api.user import UserHandler
+from server.handlers.api.user import UserPropertyHandler
 
-from tornado.web import RequestHandler
-from tornado_sqlalchemy import SessionMixin
-
-from server.models import User
-
-
-class BaseAPIHandler(RequestHandler, SessionMixin):
-    user = None
-
-    def set_default_headers(self):
-        self.set_header("Access-Control-Allow-Origin", "*")
-        self.set_header("Access-Control-Allow-Headers",
-                        "x-requested-with, Content-Type, token-id")
-        self.set_header('Access-Control-Allow-Methods',
-                        'POST, GET, OPTIONS')
-
-    def options(self):
-        self.set_status(204)
-        self.finish()
-
-
-def auth_require(f):
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        s = args[0]
-        token_id = s.request.headers.get('token-id')
-        if not token_id:
-            s.set_status(401)
-            s.write({"error": "Not auth!"})
-            return
-        user = s.session.query(User).filter_by(token_id=token_id).first()
-        if not user:
-            s.set_status(401)
-            s.write({"error": "Auth invalid!"})
-            return
-        s.user = user
-        return f(*args, **kwargs)
-    return wrapper
-
-
-def admin_require(f):
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        s = args[0]
-        token_id = s.request.headers.get('token-id')
-        if not token_id:
-            s.set_status(401)
-            s.write({"error": "Not auth!"})
-            return
-        user = s.session.query(User).filter_by(token_id=token_id).first()
-        if not user or user.role != 'admin':
-            s.set_status(401)
-            s.write({"error": "Auth invalid!"})
-            return
-        s.user = user
-        return f(*args, **kwargs)
-    return wrapper
+api_handers = [
+    (r'/api/teachers', TeacherHandler),
+    (r'/api/teachers/([0-9]+)', TeacherDetailHandler),
+    (r'/api/teacherjobs', TeacherJobHandler),
+    (r'/api/teacherjobs/([0-9]+)', TeacherJobDetailHandler),
+    (r'/api/users', UserHandler),
+    (r'/api/users/([0-9]+)', UserDetailHandler),
+    [r'/api/users/([0-9]+)/property', UserPropertyHandler],
+    (r'/api/token', TokenHandler),
+    (r'/api/questions', QuestionHandler),
+    (r'/api/questions/([0-9]+)', QuestionDetailHandler),
+    (r'/api/msg', UnreadMsgHandler),
+    (r'/api/msg/([0-9]+)', UserMsgHandler),
+]

@@ -46,7 +46,7 @@ class LoginHandler(BaseAdminHandler):
         self.redirect("/admin")
 
 
-class TokenHandler(BaseAdminHandler):
+class TokenListHandler(BaseAdminHandler):
 
     @coroutine
     @admin_require
@@ -70,3 +70,15 @@ class TokenHandler(BaseAdminHandler):
 </body>
 </html>
         """.format('<br>'.join(token_list)))
+
+
+class TokenHandler(BaseAdminHandler):
+
+    @coroutine
+    @admin_require
+    def delete(self, user_id):
+        session = self.session
+        user = session.query(User).filter(User.id ==  user_id).first()
+        if user:
+            user.token_id = uuid.uuid4().hex
+        self.redirect("/admin/token")

@@ -39,7 +39,7 @@ class TestMsg(TestBase):
                               headers={"token-id": user.token_id})
         self.assertEqual(response.code, 200)
         self.assertGreater(count, 0)
-        self.assertEqual(len(json.loads(response.body)['msg']), count)
+        self.assertEqual(len(json.loads(response.body)['msgs']), count)
 
     def test_msg_with_user(self):
         user1 = self.get_user(2)
@@ -49,7 +49,7 @@ class TestMsg(TestBase):
                               headers={"token-id": user1.token_id})
         self.assertEqual(response.code, 200)
         self.assertGreater(count, 0)
-        self.assertEqual(len(json.loads(response.body)['msg']), count)
+        self.assertEqual(len(json.loads(response.body)['msgs']), count)
 
     def test_msg_read(self):
         user1 = self.get_user(2)

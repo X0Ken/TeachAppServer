@@ -13,7 +13,8 @@ class TestUser(TestBase):
         body = {
             "user": {
                 "id": user.id,
-                "username": user.username
+                "username": user.username,
+                'pic': user.pic,
             }
         }
         self.assertDictEqual(json.loads(response.body), body)
@@ -31,6 +32,7 @@ class TestUser(TestBase):
                 'id': 'id',
                 'token_id': "id",
                 'role': 'user',
+                'pic': "",
                 'username': 'testuser'
             }
         }
@@ -56,6 +58,7 @@ class TestUser(TestBase):
                 'token_id': 'id',
                 'role': 'user',
                 'username': 'testuser',
+                'pic': "",
                 'id': 'id'
             }
         }

@@ -20,7 +20,7 @@ class UnreadMsgHandler(BaseAPIHandler):
             Msg.unread == 1
         )
         self.write({
-            "msg": [
+            "msgs": [
                 m.get_info() for m in msgs
             ]
         })
@@ -44,7 +44,7 @@ class UserMsgHandler(BaseAPIHandler):
             ))
 
             self.write({
-                "msg": [
+                "msgs": [
                     m.get_info() for m in msgs 
                 ]
             })
@@ -55,7 +55,6 @@ class UserMsgHandler(BaseAPIHandler):
         body = json.loads(self.request.body.decode('utf-8'))
         msg = body.get("msg")
 
-        receiver = msg['receiver']
         content = msg['content']
 
         with self.make_session() as session:

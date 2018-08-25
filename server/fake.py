@@ -10,6 +10,7 @@ user_info_list = [
         "username": "admin",
         "password": "password",
         "role": "admin",
+        'pic': "/static/imgs/user1.jpg",
         "token_id": "96da3aee6b6e47b98f08664abfbc599a"
     },
     {
@@ -17,6 +18,7 @@ user_info_list = [
         "username": "user",
         "password": "password",
         "role": "user",
+        'pic': "/static/imgs/user1.jpg",
         "token_id": "af71d42c091c426eb33982bf83779a75"
     },
     {
@@ -24,6 +26,7 @@ user_info_list = [
         "username": "user2",
         "password": "password",
         "role": "user",
+        'pic': "/static/imgs/user2.jpg",
         "token_id": "370707741a0c41ef9d0e6a7d1fe2c043"
     }
 ]

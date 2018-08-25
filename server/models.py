@@ -45,22 +45,22 @@ class User(DeclarativeBase, ObjectMixin):
     id = Column(Integer, primary_key=True)
     username = Column(String(255), unique=True)
     password = Column(String(255))
+    pic = Column(String(255))
     role = Column(String(255))
     token_id = Column(String(255), default=default_uuid)
 
     def get_info(self):
         return {
             "id": self.id,
+            "pic": self.pic,
             "username": self.username,
         }
 
     def get_token_info(self):
-        return {
-            "token_id": self.token_id,
-            "username": self.username,
-            "id": self.id,
-            "role": self.role,
-        }
+        info = self.get_info()
+        info['token_id'] = self.token_id
+        info['role'] = self.role
+        return info
 
 
 class UserProperty(DeclarativeBase, ObjectMixin):

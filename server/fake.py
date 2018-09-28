@@ -1,4 +1,5 @@
-from server.models import Msg
+from server.models import Msg, AnswerKeywords
+from server.models import Order
 from server.models import Question
 from server.models import Teacher
 from server.models import TeacherJob
@@ -28,6 +29,14 @@ user_info_list = [
         "role": "user",
         'pic': "/static/imgs/user2.jpg",
         "token_id": "370707741a0c41ef9d0e6a7d1fe2c043"
+    },
+    {
+        "id": 4,
+        "username": "老马",
+        "password": "password",
+        "role": "user",
+        'pic': "/static/imgs/user2.jpg",
+        "token_id": "370707741a0c41ef9d0e6a7d1fe2c043"
     }
 ]
 
@@ -44,7 +53,7 @@ teacher_info_list = [
         "self_evaluate": "飞洒付付付付付付付付付付付付",
         "subject": "英语",
         "time": "下午",
-        "id": 1
+        "id": 2
     },
     {
         "gender": "女",
@@ -67,26 +76,39 @@ teacherjob_info_list = [
         'id': 1,
         'gender': "a",
         'highest_education': "ed",
-        'method': "",
-        'pay': "",
-        'region': "",
-        'school': "",
-        'subject': "",
-        'time': ""
+        'method': "远程",
+        'pay': "100",
+        'region': "北京",
+        'school': "北京大学",
+        'subject': "语文",
+        'time': "下午",
+        'provider': 2
+    },
+    {
+        'id': 2,
+        'gender': "a",
+        'highest_education': "ed",
+        'method': "上门",
+        'pay': "50",
+        'region': "海淀区",
+        'school': "清华大学",
+        'subject': "数学",
+        'time': "中午",
+        'provider': 4
     }
 ]
 
 question_info_list = [
     {
         "id": 2,
-        "asker": 2,
+        "asker_id": 2,
         "pay": "66",
         "content": "怎么做红烧肉",
         "keywords": "厨艺"
     },
     {
         "id": 1,
-        "asker": 3,
+        "asker_id": 3,
         "pay": "66",
         "content": "怎么计算三角形面积",
         "keywords": "数学"
@@ -96,15 +118,118 @@ question_info_list = [
 msg_info_list = [
     {
         "id": 1,
-        "sender": 2,
-        "receiver": 3,
-        "content": "您是这个方面的专家吗？"
+        "sender_id": 3,
+        "receiver_id": 2,
+        "content": "您是这个方面的专家吗？",
+        "typ": "question",
+        "typ_id": 2,
     },
     {
         "id": 2,
-        "sender": 3,
-        "receiver": 2,
-        "content": "是"
+        "sender_id": 3,
+        "receiver_id": 2,
+        "content": "这个我教你",
+        "typ": "question",
+        "typ_id": 2,
+    },
+    {
+        "id": 3,
+        "sender_id": 4,
+        "receiver_id": 2,
+        "content": "这个我会",
+        "typ": "question",
+        "typ_id": 2,
+    },
+    {
+        "id": 4,
+        "sender_id": 2,
+        "receiver_id": 3,
+        "content": "是",
+        "typ": "question",
+        "typ_id": 2,
+    },
+    {
+        "id": 5,
+        "sender_id": 2,
+        "receiver_id": 3,
+        "content": "您是这个方面的专家吗？",
+        "typ": "job",
+        "typ_id": 1,
+    },
+    {
+        "id": 6,
+        "sender_id": 2,
+        "receiver_id": 3,
+        "content": "你了解这方面的信息吗？",
+        "typ": "job",
+        "typ_id": 1,
+    },
+    {
+        "id": 7,
+        "sender_id": 2,
+        "receiver_id": 4,
+        "content": "在吗",
+        "typ": "job",
+        "typ_id": 1,
+    },
+    {
+        "id": 8,
+        "sender_id": 4,
+        "receiver_id": 2,
+        "content": "是",
+        "typ": "job",
+        "typ_id": 1,
+    },
+    {
+        "id": 9,
+        "sender_id": 4,
+        "receiver_id": 3,
+        "content": "是",
+        "typ": "job",
+        "typ_id": 2,
+    },
+    {
+        "id": 10,
+        "sender_id": 4,
+        "receiver_id": 2,
+        "content": "你周末有空吗？",
+        "typ": "job",
+        "typ_id": 2,
+    },
+]
+
+order_info_list = [
+    {
+        'id': 1,
+        'payer_id': 4,
+        'payee_id': 3,
+        'unit': "天",
+        'unit_price': 1000,
+        'number': 1,
+        'amount': 1000,
+        'typ': 'job',
+        'typ_id': 2,
+        'state': 'payed',
+    },
+    {
+        'id': 2,
+        'payer_id': 3,
+        'payee_id': 2,
+        'unit': "次",
+        'unit_price': 1000,
+        'number': 1,
+        'amount': 1000,
+        'typ': 'question',
+        'typ_id': 2,
+        'state': 'create',
+    },
+]
+
+answer_keyword_info_list = [
+    {
+        "id": 1,
+        "user_id": 2,
+        "keyword": 'test',
     }
 ]
 
@@ -154,6 +279,24 @@ def fake_msg(session):
             session.add(msg)
 
 
+def fake_order(session):
+    for order_info in order_info_list:
+        order = session.query(Order).filter_by(
+            id=order_info['id']).first()
+        if not order:
+            order = Order(**order_info)
+            session.add(order)
+
+
+def fake_answer_keyword(session):
+    for answer_keyword_info in answer_keyword_info_list:
+        answer_keyword = session.query(AnswerKeywords).filter_by(
+            id=answer_keyword_info['id']).first()
+        if not answer_keyword:
+            answer_keyword = AnswerKeywords(**answer_keyword_info)
+            session.add(answer_keyword)
+
+
 def insert_fake_data(session_factory):
     session = session_factory.make_session()
 
@@ -162,6 +305,8 @@ def insert_fake_data(session_factory):
     fake_teacherjob(session)
     fake_question(session)
     fake_msg(session)
+    fake_order(session)
+    fake_answer_keyword(session)
 
     session.commit()
     session.close()

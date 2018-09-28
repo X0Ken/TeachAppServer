@@ -29,8 +29,8 @@ class TestQuestion(TestBase):
         }
         res_body = copy.deepcopy(req_body)
         res_body['question']['id'] = 'id'
-        res_body['question']['fixed'] = 'fixed'
-        res_body['question']['asker'] = user.id
+        res_body['question']['state'] = 'state'
+        res_body['question']['asker_id'] = user.id
         response = self.fetch('/api/questions', method="PUT",
                               body=json.dumps(req_body),
                               headers={"token-id": user.token_id})
@@ -46,7 +46,7 @@ class TestQuestion(TestBase):
         response = self.fetch('/api/questions/{}'.format(q.id))
         self.assertEqual(response.code, 200)
         self.assertListEqual(
-            sorted(['keywords', 'id', 'fixed', 'content', 'pay', 'asker']),
+            sorted(['keywords', 'id', 'state', 'content', 'pay', 'asker_id']),
             sorted(json.loads(response.body)['question'].keys())
         )
 

@@ -8,6 +8,7 @@ from server.handlers.api.base import auth_require
 from server.models import Teacher
 from server.models import TeacherJob
 from server.models import User
+from server.utils import strutils
 
 
 class TeacherJobDetailHandler(BaseAPIHandler):
@@ -23,10 +24,20 @@ class TeacherJobDetailHandler(BaseAPIHandler):
 
 class TeacherJobHandler(BaseAPIHandler):
 
+    @auth_require
+    def only_me(self, jobs):
+        user_id = self.user.id
+        jobs = jobs.filter(TeacherJob.provider == user_id)
+        return jobs
+
     @coroutine
     def get(self):
+        only_me = self.get_argument("only_me", default="false")
+        only_me = strutils.bool_from_string(only_me)
         with self.make_session() as session:
-            jobs = session.query(TeacherJob).filter_by(deleted=0).all()
+            jobs = session.query(TeacherJob).filter_by(deleted=0)
+            if only_me:
+                jobs = self.only_me(jobs)
             self.write({
                 "teacherjobs": [job.get_info() for job in jobs]
             })

@@ -5,7 +5,9 @@ from tornado.gen import coroutine
 
 from server.handlers.api.base import BaseAPIHandler
 from server.handlers.api.base import auth_require
+from server.models import AnswerKeywords
 from server.models import Question
+from server.utils import strutils
 
 
 class QuestionDetailHandler(BaseAPIHandler):
@@ -45,7 +47,7 @@ class QuestionDetailHandler(BaseAPIHandler):
         keywords = question['keywords']
         content = question['content']
         pay = question['pay']
-        fixed = question['fixed']
+        state = question['state']
 
         session = self.session
         question = session.query(Question).filter_by(
@@ -54,7 +56,7 @@ class QuestionDetailHandler(BaseAPIHandler):
         question.keywords = keywords
         question.content = content
         question.pay = pay
-        question.fixed = fixed
+        question.state = state
         session.flush()
         session.refresh(question)
         self.write({"question": question.get_info()})
@@ -62,10 +64,29 @@ class QuestionDetailHandler(BaseAPIHandler):
 
 class QuestionHandler(BaseAPIHandler):
 
+    @auth_require
+    def my_question(self, questions):
+        user_id = self.user.id
+        questions = questions.filter(Question.asker_id == user_id)
+        return questions
+
+
     @coroutine
     def get(self):
         session = self.session
-        questions = session.query(Question).all()
+        questions = session.query(Question)
+
+        only_me = self.get_argument("only_me", default="false")
+        only_me = strutils.bool_from_string(only_me)
+        if only_me:
+            questions = self.my_question(questions)
+
+        keyword = self.get_argument("keyword", default=None)
+        if keyword:
+            questions = questions.filter(
+                Question.keywords.like("%{}%".format(keyword))
+            )
+
         self.write({
             "questions": [
                 q.get_info() for q in questions
@@ -86,7 +107,7 @@ class QuestionHandler(BaseAPIHandler):
             keywords=keywords,
             content=content,
             pay=pay,
-            asker=self.user.id
+            asker_id=self.user.id
         )
 
         session = self.session
@@ -94,3 +115,70 @@ class QuestionHandler(BaseAPIHandler):
         session.flush()
         session.refresh(question)
         self.write({"question": question.get_info()})
+
+
+class AnswerKeywordsHandler(BaseAPIHandler):
+
+    @auth_require
+    def get_user_keywords(self):
+        session = self.session
+        user_id = self.user.id
+        keys = session.query(AnswerKeywords).filter(
+            AnswerKeywords.user_id == user_id,
+            AnswerKeywords.deleted == 0
+        )
+        return keys
+
+
+    @coroutine
+    def get(self):
+        keys = self.get_user_keywords()
+
+        self.write({
+            "keywords": [
+                k.get_info() for k in keys
+            ]
+        })
+
+    @coroutine
+    @auth_require
+    def put(self):
+        body = json.loads(self.request.body.decode('utf-8'))
+        p = body.get("keyword")
+
+        keyword = p['keyword']
+        user_id = self.user.id
+
+        k = AnswerKeywords(
+            keyword=keyword,
+            user_id=user_id
+        )
+
+        session = self.session
+        session.add(k)
+        session.flush()
+        session.refresh(k)
+
+        keys = self.get_user_keywords()
+        self.write({
+            "keywords": [
+                k.get_info() for k in keys
+            ]
+        })
+
+
+class AnswerKeywordsDetailHandler(BaseAPIHandler):
+
+    @coroutine
+    @auth_require
+    def delete(self, k_id):
+        session = self.session
+        k = session.query(AnswerKeywords).filter_by(
+            id=k_id).first()
+        if not k:
+            self.set_status(404)
+            self.write({"error": "Keyword not found!"})
+            return
+        k.deleted = 1
+        k.delete_at = datetime.datetime.utcnow()
+        session.flush()

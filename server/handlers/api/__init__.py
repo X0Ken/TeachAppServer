@@ -1,5 +1,10 @@
-from server.handlers.api.msg import UnreadMsgHandler
+from server.handlers.api.msg import UnreadMsgHandler, QuestionMsgHandler, \
+    QuestionUserMsgHandler, JobMsgHandler, JobUserMsgHandler
 from server.handlers.api.msg import UserMsgHandler
+from server.handlers.api.order import OrderDetailHandler
+from server.handlers.api.order import OrderHandler
+from server.handlers.api.question import AnswerKeywordsDetailHandler
+from server.handlers.api.question import AnswerKeywordsHandler
 from server.handlers.api.question import QuestionDetailHandler
 from server.handlers.api.question import QuestionHandler
 from server.handlers.api.teacher import TeacherDetailHandler
@@ -24,4 +29,12 @@ api_handers = [
     (r'/api/questions/([0-9]+)', QuestionDetailHandler),
     (r'/api/msg', UnreadMsgHandler),
     (r'/api/msg/([0-9]+)', UserMsgHandler),
+    (r'/api/msg/question/([0-9]+)', QuestionMsgHandler),
+    (r'/api/msg/question/([0-9]+)/user/([0-9]+)', QuestionUserMsgHandler),
+    (r'/api/msg/job', JobMsgHandler),
+    (r'/api/msg/job/([0-9]+)/user/([0-9]+)', JobUserMsgHandler),
+    (r'/api/orders', OrderHandler),
+    (r'/api/orders/([0-9]+)', OrderDetailHandler),
+    (r'/api/answer_keywords', AnswerKeywordsHandler),
+    (r'/api/answer_keywords/([0-9]+)', AnswerKeywordsDetailHandler),
 ]

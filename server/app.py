@@ -4,8 +4,9 @@ from tornado.gen import coroutine
 from tornado.ioloop import IOLoop
 from tornado.options import define
 from tornado.options import options
-from tornado.web import Application, StaticFileHandler
+from tornado.web import Application
 from tornado.web import RequestHandler
+from tornado.web import StaticFileHandler
 from tornado_sqlalchemy import SessionMixin
 from tornado_sqlalchemy import make_session_factory
 
@@ -25,12 +26,13 @@ define("enable_fake_data",
 
 static_path = os.path.join(os.path.dirname(
     os.path.dirname(__file__)), "static")
-
+web_app_path = os.path.join(os.path.dirname(
+    os.path.dirname(__file__)), "app")
 
 class IndexHandler(RequestHandler, SessionMixin):
     @coroutine
     def get(self):
-        self.write('Hello Tom!')
+        self.redirect("/app/index.html")
 
 
 def make_app():
@@ -41,8 +43,9 @@ def make_app():
 
     handlers = [
         (r'/', IndexHandler),
-        (r"/(favicon\.ico)", StaticFileHandler),
-        (r"/static/(.*)", StaticFileHandler),
+        (r"/static/(.*)", StaticFileHandler, {"path": static_path}),
+        (r"/app/(.*)", StaticFileHandler, {"path": web_app_path}),
+        (r"/(config\.xml)", StaticFileHandler, {"path": web_app_path}),
     ]
     handlers.extend(api_handers)
     handlers.extend(admin_handers)

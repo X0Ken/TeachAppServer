@@ -21,7 +21,7 @@ class UserDetailHandler(BaseAPIHandler):
 class UserHandler(BaseAPIHandler):
 
     @coroutine
-    def PUT(self):
+    def put(self):
         session = self.session
         token_id = uuid.uuid4().hex
         body = json.loads(self.request.body.decode('utf-8'))
@@ -30,8 +30,13 @@ class UserHandler(BaseAPIHandler):
         username = user['username']
         password = user['password']
 
-        user = User(username=username,
-                    password=password, role='user', token_id=token_id)
+        user = User(
+            username=username,
+            password=password,
+            role='user',
+            token_id=token_id,
+            pic="/static/imgs/user2.jpg"
+        )
 
         session.add(user)
         session.flush()

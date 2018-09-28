@@ -10,10 +10,10 @@ from tornado_sqlalchemy import declarative_base
 
 DeclarativeBase = declarative_base()
 
-AVALIBLE_ROLE = ['user', 'admin']
-AVALIBLE_METHOD = ['remote', 'home']
-AVALIBLE_GENDER = ['male ', 'female']
-AVALIBLE_EDUCATION = ['Undergraduate', 'master', 'PhD']
+AVAILABLE_ROLE = ['user', 'admin']
+AVAILABLE_METHOD = ['remote', 'home']
+AVAILABLE_GENDER = ['male ', 'female']
+AVAILABLE_EDUCATION = ['Undergraduate', 'master', 'PhD']
 
 
 def default_uuid():
@@ -69,6 +69,19 @@ class UserProperty(DeclarativeBase, ObjectMixin):
     user_id = Column(Integer)
     property = Column(String(255))
     value = Column(String(255))
+
+
+class AnswerKeywords(DeclarativeBase, ObjectMixin):
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer)
+    keyword = Column(String(255))
+
+    def get_info(self):
+        return {
+            "id": self.id,
+            "keyword": self.keyword,
+        }
 
 
 class TeacherJob(DeclarativeBase, ObjectMixin):
@@ -133,14 +146,18 @@ class Teacher(DeclarativeBase, ObjectMixin):
         }
 
 
+question_state_create = 0
+question_state_fixed = 1
+
+
 class Question(DeclarativeBase, ObjectMixin):
 
     id = Column(Integer, primary_key=True)
     content = Column(String(255))
     keywords = Column(String(255))
     pay = Column(Integer)
-    asker = Column(Integer)
-    fixed = Column(Integer, default=0)
+    asker_id = Column(Integer)
+    state = Column(Integer, default=0)
 
     def get_info(self):
         return {
@@ -148,33 +165,64 @@ class Question(DeclarativeBase, ObjectMixin):
             "content": self.content,
             "keywords": self.keywords,
             "pay": self.pay,
-            "asker": self.asker,
-            "fixed": self.fixed
+            "asker_id": self.asker_id,
+            "state": self.state
         }
+
+
+AVAILABLE_ORDER_TYPE = ['question', 'job']
+AVAILABLE_ORDER_STATE = ['create', 'payed', 'rejected']
 
 
 class Order(DeclarativeBase, ObjectMixin):
 
     id = Column(Integer, primary_key=True)
     # payer -> payee
-    payer = Column(Integer)
-    payee = Column(Integer)
+    payer_id = Column(Integer)
+    payee_id = Column(Integer)
+    unit = Column(String(255))
+    unit_price = Column(Integer)
+    number = Column(Integer)
     amount = Column(Integer)  # real =  pay / 100
+    typ = Column(String(255))
+    typ_id = Column(Integer)
+    state = Column(String(255), default='create')
+
+    def get_info(self):
+        return {
+            'id': self.id,
+            'payer_id': self.payer_id,
+            'payee_id': self.payee_id,
+            'unit': self.unit,
+            'unit_price': self.unit_price,
+            'number': self.number,
+            'amount': self.amount,
+            'type': self.typ,
+            'type_id': self.typ_id,
+            'state': self.state,
+        }
+
+
+AVAILABLE_MSG_TYPE = ['question', 'job']
 
 
 class Msg(DeclarativeBase, ObjectMixin):
 
     id = Column(Integer, primary_key=True)
-    sender = Column(Integer)
-    receiver = Column(Integer)
+    sender_id = Column(Integer)
+    receiver_id = Column(Integer)
     content = Column(String(255))
     unread = Column(Integer, default=1)
+    typ = Column(String(255))
+    typ_id = Column(Integer)
     
     def get_info(self):
         return {
             'id': self.id,
-            'sender': self.sender,
-            'receiver': self.receiver,
+            'sender_id': self.sender_id,
+            'receiver_id': self.receiver_id,
             'content': self.content,
-            'unread': self.unread
+            'unread': self.unread,
+            'type': self.typ,
+            'type_id': self.typ_id
         }

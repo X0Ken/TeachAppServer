@@ -7,6 +7,8 @@ TEST_MODULES = [
     'server.test.test_teacher',
     'server.test.test_teacherjob',
     'server.test.test_user',
+    'server.test.test_answer_keywords',
+    'server.test.test_order',
 ]
 
 

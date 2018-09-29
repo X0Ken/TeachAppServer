@@ -20,7 +20,7 @@ class TestJob(TestBase):
         self.assertListEqual(
             sorted(['create_at', 'gender', 'highest_education', 'id', 'method',
                     'pay', 'region', 'school', 'subject', 'time',
-                    'provider']),
+                    'provider_id']),
             sorted(json.loads(response.body)['teacherjob'].keys()))
 
     def test_list(self):
@@ -46,7 +46,7 @@ class TestJob(TestBase):
         res_body = copy.deepcopy(req_body)
         res_body['teacherjob']['id'] = 'id'
         res_body['teacherjob']['create_at'] = 'create_at'
-        res_body['teacherjob']['provider'] = 'provider'
+        res_body['teacherjob']['provider_id'] = 'provider_id'
         response = self.fetch('/api/teacherjobs',
                               method="PUT",
                               body=json.dumps(req_body),
@@ -55,3 +55,8 @@ class TestJob(TestBase):
         self.assertListEqual(
             sorted(res_body['teacherjob'].keys()),
             sorted(json.loads(response.body)['teacherjob'].keys()))
+
+    def test_list_by_job(self):
+        response = self.fetch('/api/teachers/job/3')
+        self.assertEqual(response.code, 200)
+        self.assertEqual(len(json.loads(response.body)['teachers']), 1)

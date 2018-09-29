@@ -20,6 +20,10 @@ class BaseAPIHandler(SessionMixin, RequestHandler):
         self.set_status(204)
         self.finish()
 
+    def bad_request(self, msg):
+        self.set_status(400)
+        self.write({"error": msg})
+
 
 def auth_require(f):
     @wraps(f)

@@ -104,7 +104,7 @@ class JobMsgHandler(BaseAPIHandler):
             Msg.typ == "job",
             Msg.receiver_id == user_id,
             Msg.sender_id != user_id,
-            TeacherJob.provider != user_id
+            TeacherJob.provider_id != user_id
         ).group_by(Msg.sender_id)
         self.write({
             "msgs": [

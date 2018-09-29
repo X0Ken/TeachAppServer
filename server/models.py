@@ -95,7 +95,7 @@ class TeacherJob(DeclarativeBase, ObjectMixin):
     region = Column(String(255))
     subject = Column(String(255))
     time = Column(String(255))
-    provider = Column(Integer)
+    provider_id = Column(Integer)
 
     def get_info(self):
         return {
@@ -108,7 +108,7 @@ class TeacherJob(DeclarativeBase, ObjectMixin):
             "region": self.region,
             "subject": self.subject,
             "time": self.time,
-            "provider": self.provider,
+            "provider_id": self.provider_id,
             "create_at": self.create_at.strftime('%Y-%m-%d %H:%M:%S')
         }
 
@@ -183,7 +183,7 @@ class Order(DeclarativeBase, ObjectMixin):
     unit = Column(String(255))
     unit_price = Column(Integer)
     number = Column(Integer)
-    amount = Column(Integer)  # real =  pay / 100
+    amount = Column(Integer)
     typ = Column(String(255))
     typ_id = Column(Integer)
     state = Column(String(255), default='create')

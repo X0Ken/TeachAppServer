@@ -82,7 +82,7 @@ teacherjob_info_list = [
         'school': "北京大学",
         'subject': "语文",
         'time': "下午",
-        'provider': 2
+        'provider_id': 2
     },
     {
         'id': 2,
@@ -94,7 +94,19 @@ teacherjob_info_list = [
         'school': "清华大学",
         'subject': "数学",
         'time': "中午",
-        'provider': 4
+        'provider_id': 4
+    },
+    {
+        'id': 3,
+        'gender': "",
+        'highest_education': "博士",
+        'method': "",
+        'pay': "",
+        'region': "",
+        'school': "",
+        'subject': "",
+        'time': "",
+        'provider_id': 4
     }
 ]
 
@@ -111,6 +123,13 @@ question_info_list = [
         "asker_id": 3,
         "pay": "66",
         "content": "怎么计算三角形面积",
+        "keywords": "数学"
+    },
+    {
+        "id": 3,
+        "asker_id": 3,
+        "pay": "66",
+        "content": "勾股定理公式是啥",
         "keywords": "数学"
     }
 ]
@@ -213,8 +232,8 @@ order_info_list = [
     },
     {
         'id': 2,
-        'payer_id': 3,
-        'payee_id': 2,
+        'payer_id': 2,
+        'payee_id': 3,
         'unit': "次",
         'unit_price': 1000,
         'number': 1,
@@ -229,7 +248,7 @@ answer_keyword_info_list = [
     {
         "id": 1,
         "user_id": 2,
-        "keyword": 'test',
+        "keyword": '厨艺',
     }
 ]
 

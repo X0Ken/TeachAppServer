@@ -114,3 +114,37 @@ class OrderHandler(BaseAPIHandler):
         session.flush()
         session.refresh(order)
         self.write({"order": order.get_info()})
+
+
+class OrderQuestionHandler(BaseAPIHandler):
+    @coroutine
+    def get(self, qid):
+        session = self.session
+        order = session.query(Order).filter(
+            Order.typ_id == qid,
+            Order.typ == 'question'
+            ).first()
+        if not order:
+            self.set_status(404)
+            self.write({"error": "Order not found!"})
+            return
+        self.write({
+            "order": order.get_info()
+        })
+
+
+class OrderJobHandler(BaseAPIHandler):
+    @coroutine
+    def get(self, jid):
+        session = self.session
+        order = session.query(Order).filter(
+            Order.typ_id == jid,
+            Order.typ == 'job'
+            ).first()
+        if not order:
+            self.set_status(404)
+            self.write({"error": "Order not found!"})
+            return
+        self.write({
+            "order": order.get_info()
+        })

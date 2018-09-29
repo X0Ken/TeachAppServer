@@ -12,12 +12,11 @@ class TestOrder(TestBase):
         return count
 
     def test_list(self):
-        count = self.get_count()
         user = self.get_user()
         response = self.fetch('/api/orders',
                               headers={"token-id": user.token_id})
         self.assertEqual(response.code, 200)
-        self.assertEqual(len(json.loads(response.body)['orders']), count)
+        self.assertEqual(len(json.loads(response.body)['orders']), 1)
 
     def test_add(self):
         user = self.get_user(2)
@@ -89,4 +88,26 @@ class TestOrder(TestBase):
         self.assertEqual(
             json.loads(response.body)['order']["amount"],
             100
+        )
+
+    def test_get_by_job(self):
+        session = self.session
+        o = session.query(Order).first()
+        response = self.fetch('/api/orders/job/{}'.format(2))
+        self.assertEqual(response.code, 200)
+        self.assertListEqual(
+            sorted(['amount', 'id', 'number', 'payee_id', 'payer_id',
+                    'state', 'type', 'type_id', 'unit', 'unit_price']),
+            sorted(json.loads(response.body)['order'].keys())
+        )
+
+    def test_get_by_question(self):
+        session = self.session
+        o = session.query(Order).first()
+        response = self.fetch('/api/orders/question/{}'.format(2))
+        self.assertEqual(response.code, 200)
+        self.assertListEqual(
+            sorted(['amount', 'id', 'number', 'payee_id', 'payer_id',
+                    'state', 'type', 'type_id', 'unit', 'unit_price']),
+            sorted(json.loads(response.body)['order'].keys())
         )

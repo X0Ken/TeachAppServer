@@ -5,9 +5,9 @@ import string
 
 from tornado.gen import coroutine
 
+from server.conf import upload_path, root_path
 from server.handlers.api.base import BaseAPIHandler
 from server.handlers.api.base import auth_require
-from server.models import Msg
 
 
 class FileHandler(BaseAPIHandler):
@@ -22,24 +22,7 @@ class FileHandler(BaseAPIHandler):
             random.choice(string.ascii_lowercase + string.digits) for x in
             range(6))
         final_filename = fname + extension
-        output_file = open("uploads/" + final_filename, 'w')
+        fpath = os.path.join(upload_path, final_filename)
+        output_file = open(fpath, 'wb')
         output_file.write(file1['body'])
-        self.finish("file" + final_filename + " is uploaded")
-
-
-
-class UnreadMsgHandler(BaseAPIHandler):
-
-    @coroutine
-    @auth_require
-    def get(self):
-        session = self.session
-        msgs = session.query(Msg).filter(
-            Msg.receiver == self.user.id,
-            Msg.unread == 1
-        )
-        self.write({
-            "msgs": [
-                m.get_info() for m in msgs
-            ]
-        })
+        self.write({"path": fpath.replace(root_path, "")})

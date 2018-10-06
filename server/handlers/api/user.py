@@ -1,11 +1,12 @@
 import json
 import uuid
+from datetime import datetime
 
 from tornado.gen import coroutine
 
 from server.handlers.api.base import BaseAPIHandler
 from server.handlers.api.base import auth_require
-from server.models import User
+from server.models import User, UserInfo
 from server.models import UserProperty
 
 
@@ -16,6 +17,32 @@ class UserDetailHandler(BaseAPIHandler):
         session = self.session
         user = session.query(User).filter_by(id=user_id).first()
         self.write({"user": user.get_info()})
+
+    @coroutine
+    @auth_require
+    def post(self, user_id):
+        if int(user_id) != self.current_user.id:
+            self.set_status(400)
+            self.write({"error": "User must self!"})
+        session = self.session
+        body = json.loads(self.request.body.decode('utf-8'))
+        body = body.get("user")
+
+        user = session.query(User).filter(
+            User.id == self.current_user.id
+        ).first()
+        user.update_at = datetime.now()
+
+        atts = ['pic']
+        for att in atts:
+            v = body.get(att)
+            if v:
+                setattr(user, att, v)
+
+        session.add(user)
+        session.flush()
+        session.refresh(user)
+        self.write({"user": user.get_token_info()})
 
 
 class UserHandler(BaseAPIHandler):
@@ -131,3 +158,44 @@ class TokenHandler(BaseAPIHandler):
             self.auth_password(auth)
         elif auth_type == "token":
             self.auth_token(auth)
+
+
+class UserInfoHandler(BaseAPIHandler):
+
+    @coroutine
+    @auth_require
+    def get(self):
+        session = self.session
+        user_info = session.query(UserInfo).filter(
+            UserInfo.id == self.current_user.id
+        ).first()
+        if not user_info:
+            user_info = UserInfo(id=self.current_user.id)
+        self.write({"user_info": user_info.get_info()})
+
+
+    @coroutine
+    @auth_require
+    def post(self):
+        session = self.session
+        body = json.loads(self.request.body.decode('utf-8'))
+        body = body.get("user_info")
+
+        user_info = session.query(UserInfo).filter(
+            UserInfo.id == self.current_user.id
+        ).first()
+        if not user_info:
+            user_info = UserInfo(id=self.current_user.id)
+        else:
+            user_info.update_at = datetime.now()
+
+        atts = ['name', 'age', 'education', 'self_evaluate', 'gender']
+        for att in atts:
+            v = body.get(att)
+            if v:
+                setattr(user_info, att, v)
+
+        session.add(user_info)
+        session.flush()
+        session.refresh(user_info)
+        self.write({"user_info": user_info.get_info()})

@@ -18,7 +18,7 @@ class TestTeacher(TestBase):
         self.assertEqual(response.code, 200)
         self.assertListEqual(
             sorted(['create_at', 'gender', 'highest_education', 'method',
-                    'idcard', 'self_evaluate',
+                    'idcard', 'self_evaluate', 'score',
                     'pay', 'region', 'school', 'school_subject', 'subject',
                     'time', 'id', 'username',
                     'success_order', 'good_evaluate_v']),
@@ -51,6 +51,7 @@ class TestTeacher(TestBase):
         res_body = copy.deepcopy(req_body)
         res_body['teacher']['id'] = 'id'
         res_body['teacher']['create_at'] = 'create_at'
+        res_body['teacher']['score'] = 'score'
         response = self.fetch('/api/teachers/{}'.format(user.id),
                               method="POST",
                               body=json.dumps(req_body),

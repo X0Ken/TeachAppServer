@@ -60,7 +60,7 @@ class OrderHandler(BaseAPIHandler):
     @auth_require
     def get(self):
         session = self.session
-        user_id = self.user.id
+        user_id = self.current_user.id
         orders = session.query(Order).filter(Order.deleted == 0)
 
         typ = self.get_argument("type", default="all")

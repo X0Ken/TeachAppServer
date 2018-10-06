@@ -24,44 +24,34 @@ class BaseAPIHandler(SessionMixin, RequestHandler):
         self.set_status(400)
         self.write({"error": msg})
 
+    def get_current_user(self):
+        token_id = self.request.headers.get('token-id')
+        if not token_id:
+            return None
+        user = self.session.query(User).filter_by(token_id=token_id).first()
+        if not user:
+            return None
+        return user
+
 
 def auth_require(f):
     @wraps(f)
-    def wrapper(*args, **kwargs):
-        s = args[0]
-        user = getattr(s, 'user', None)
-        if not user:
-            token_id = s.request.headers.get('token-id')
-            if not token_id:
-                s.set_status(401)
-                s.write({"error": "No auth info!"})
-                return
-            user = s.session.query(User).filter_by(token_id=token_id).first()
-            if not user:
-                s.set_status(401)
-                s.write({"error": "Auth invalid!"})
-                return
-            s.user = user
-        return f(*args, **kwargs)
+    def wrapper(self, *args, **kwargs):
+        if not self.current_user:
+            self.set_status(401)
+            self.write({"error": "Auth invalid!"})
+            return
+        return f(self, *args, **kwargs)
     return wrapper
 
 
 def admin_require(f):
     @wraps(f)
-    def wrapper(*args, **kwargs):
-        s = args[0]
-        user = getattr(s, 'user', None)
-        if not user:
-            token_id = s.request.headers.get('token-id')
-            if not token_id:
-                s.set_status(401)
-                s.write({"error": "Not auth info!"})
-                return
-            user = s.session.query(User).filter_by(token_id=token_id).first()
-            s.user = user
+    def wrapper(self, *args, **kwargs):
+        user = self.current_user
         if not user or user.role != 'admin':
-            s.set_status(401)
-            s.write({"error": "Auth invalid!"})
+            self.set_status(401)
+            self.write({"error": "Auth invalid!"})
             return
-        return f(*args, **kwargs)
+        return f(self, *args, **kwargs)
     return wrapper

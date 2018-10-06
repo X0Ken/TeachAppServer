@@ -24,6 +24,7 @@ class TestQuestion(TestBase):
             "question": {
                 "keywords": "keywords",
                 "content": 'content',
+                'attachments': "attachments",
                 "pay": 'pay',
             }
         }
@@ -46,7 +47,8 @@ class TestQuestion(TestBase):
         response = self.fetch('/api/questions/{}'.format(q.id))
         self.assertEqual(response.code, 200)
         self.assertListEqual(
-            sorted(['keywords', 'id', 'state', 'content', 'pay', 'asker_id']),
+            sorted(['keywords', 'id', 'state', 'content', 'pay', 'asker_id',
+                    'attachments']),
             sorted(json.loads(response.body)['question'].keys())
         )
 

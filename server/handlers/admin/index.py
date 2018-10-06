@@ -12,14 +12,4 @@ class IndexHandler(BaseAdminHandler):
     @coroutine
     @admin_require
     def get(self):
-        self.write("""<!DOCTYPE html>
-<html>
-<head>
-<title>Page Title</title>
-</head>
-<body>
-
-<a href="/admin/token">token</a><br>
-
-</body>
-</html>""")
+        self.render("index/index.html")

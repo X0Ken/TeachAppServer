@@ -19,6 +19,27 @@ class TestUser(TestBase):
         }
         self.assertDictEqual(json.loads(response.body), body)
 
+    def test_user_update(self):
+        user = self.get_user()
+        new_pic = "adf"
+        response = self.fetch(
+            '/api/users/{}'.format(user.id),
+            method="POST",
+            body=json.dumps({"user": {"pic": new_pic}}),
+            headers={"token-id": user.token_id}
+        )
+        self.assertEqual(response.code, 200)
+        body = {
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                'pic': new_pic,
+                'role': user.role,
+                'token_id': user.token_id,
+            }
+        }
+        self.assertDictEqual(json.loads(response.body), body)
+
     def test_token_by_password(self):
         req_body = {
             "auth": {
@@ -84,4 +105,26 @@ class TestUser(TestBase):
                               body=json.dumps(req_body),
                               headers={"token-id": user.token_id})
         self.assertEqual(response.code, 200)
+        self.assertDictEqual(req_body, res_body)
+
+    def test_user_info(self):
+        user = self.get_user()
+        req_body = {
+            "user_info": {
+                "name": "name",
+                "age": 15,
+                "education": "博士",
+                "gender": "男",
+                "self_evaluate": "活泼可爱",
+            }
+        }
+        response = self.fetch('/api/users/info'.format(user.id),
+                              method="POST",
+                              body=json.dumps(req_body),
+                              headers={"token-id": user.token_id})
+        self.assertEqual(response.code, 200)
+        res_body = json.loads(response.body)
+        res_body['user_info'].pop('id')
+        res_body['user_info'].pop('create_at')
+        res_body['user_info'].pop('update_at')
         self.assertDictEqual(req_body, res_body)

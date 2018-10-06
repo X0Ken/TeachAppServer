@@ -63,6 +63,33 @@ class User(DeclarativeBase, ObjectMixin):
         return info
 
 
+class UserInfo(DeclarativeBase, ObjectMixin):
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(255))
+    age = Column(Integer)
+    education = Column(String(255))
+    gender = Column(String(255))
+    self_evaluate = Column(String(255))
+
+    def get_info(self):
+        create_at = self.create_at.strftime('%Y-%m-%d %H:%M:%S') \
+            if self.create_at else None
+        update_at = self.update_at.strftime('%Y-%m-%d %H:%M:%S') \
+            if self.update_at else None
+
+        return {
+            "id": self.id,
+            "name": self.name,
+            "age": self.age,
+            "gender": self.gender,
+            "education": self.education,
+            "self_evaluate": self.self_evaluate,
+            "create_at": create_at,
+            "update_at": update_at,
+        }
+
+
 class UserProperty(DeclarativeBase, ObjectMixin):
 
     id = Column(Integer, primary_key=True)
@@ -91,7 +118,7 @@ class TeacherJob(DeclarativeBase, ObjectMixin):
     gender = Column(String(255))
     school = Column(String(255))
     highest_education = Column(String(255))
-    pay = Column(Integer)
+    pay = Column(Integer, default=-1)
     region = Column(String(255))
     subject = Column(String(255))
     time = Column(String(255))
@@ -122,11 +149,12 @@ class Teacher(DeclarativeBase, ObjectMixin):
     school = Column(String(255))
     school_subject = Column(String(255))
     highest_education = Column(String(255))
-    pay = Column(String(255))
+    pay = Column(Integer, default=-1)
     region = Column(String(255))
     subject = Column(String(255))
     time = Column(String(255))
     self_evaluate = Column(String(255))
+    score = Column(Integer, default=-1)
 
     def get_info(self):
         return {
@@ -142,6 +170,7 @@ class Teacher(DeclarativeBase, ObjectMixin):
             "subject": self.subject,
             "time": self.time,
             "self_evaluate": self.self_evaluate,
+            "score": self.score,
             "create_at": self.create_at.strftime('%Y-%m-%d %H:%M:%S')
         }
 
@@ -156,6 +185,7 @@ class Question(DeclarativeBase, ObjectMixin):
     content = Column(String(255))
     keywords = Column(String(255))
     pay = Column(Integer)
+    attachments = Column(String(255))
     asker_id = Column(Integer)
     state = Column(Integer, default=0)
 
@@ -164,6 +194,7 @@ class Question(DeclarativeBase, ObjectMixin):
             'id': self.id,
             "content": self.content,
             "keywords": self.keywords,
+            "attachments": self.attachments,
             "pay": self.pay,
             "asker_id": self.asker_id,
             "state": self.state

@@ -12,14 +12,7 @@ class LoginHandler(BaseAdminHandler):
 
     @coroutine
     def get(self):
-        self.write("""<form method='post'>
-  username:<br>
-  <input type="text" name="username"><br>
-  password:<br>
-  <input type="password" name="password">
-  <br>
-  <input type="submit" value="Sign in">
-</form>""")
+        self.render("users/login.html")
 
     @coroutine
     def post(self, *args, **kwargs):

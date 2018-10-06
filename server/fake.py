@@ -46,7 +46,7 @@ teacher_info_list = [
         "highest_education": "博士",
         "idcard": "fdsdf",
         "method": "上门",
-        "pay": "30-40",
+        "pay": "30",
         "region": "西城区",
         "school": "北京中央财经大学",
         "school_subject": "体育",
@@ -60,7 +60,7 @@ teacher_info_list = [
         "highest_education": "硕士",
         "idcard": "fdsdf",
         "method": "网络",
-        "pay": "30-40",
+        "pay": "40",
         "region": "西城区",
         "school": "北京中央财经大学",
         "school_subject": "体育",
@@ -68,6 +68,20 @@ teacher_info_list = [
         "subject": "英语",
         "time": "上午",
         "id": 3
+    },
+    {
+        "gender": "女",
+        "highest_education": "硕士",
+        "idcard": "fdsdf",
+        "method": "网络",
+        "pay": "30",
+        "region": "西城区",
+        "school": "北京中央财经大学",
+        "school_subject": "体育",
+        "self_evaluate": "飞洒付付付付付付付付付付付付",
+        "subject": "英语",
+        "time": "上午",
+        "id": 4
     }
 ]
 
@@ -101,7 +115,7 @@ teacherjob_info_list = [
         'gender': "",
         'highest_education': "博士",
         'method': "",
-        'pay': "",
+        'pay': 50,
         'region': "",
         'school': "",
         'subject': "",

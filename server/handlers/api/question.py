@@ -3,11 +3,15 @@ import json
 
 from tornado.gen import coroutine
 
+from server import log
 from server.handlers.api.base import BaseAPIHandler
 from server.handlers.api.base import auth_require
 from server.models import AnswerKeywords
 from server.models import Question
 from server.utils import strutils
+
+
+logger = log.get_logger()
 
 
 class QuestionDetailHandler(BaseAPIHandler):
@@ -42,21 +46,17 @@ class QuestionDetailHandler(BaseAPIHandler):
     @auth_require
     def post(self, question_id):
         body = json.loads(self.request.body.decode('utf-8'))
-        question = body.get("question")
-
-        keywords = question['keywords']
-        content = question['content']
-        pay = question['pay']
-        state = question['state']
+        body = body.get("question")
 
         session = self.session
         question = session.query(Question).filter_by(
             id=question_id).first()
         question.update_at = datetime.datetime.utcnow()
-        question.keywords = keywords
-        question.content = content
-        question.pay = pay
-        question.state = state
+        atts = ['keywords', 'content', 'pay', 'state', 'attachments']
+        for att in atts:
+            v = body.get(att)
+            if v:
+                setattr(question, att, v)
         session.flush()
         session.refresh(question)
         self.write({"question": question.get_info()})
@@ -66,7 +66,7 @@ class QuestionHandler(BaseAPIHandler):
 
     @auth_require
     def my_question(self, questions):
-        user_id = self.user.id
+        user_id = self.current_user.id
         questions = questions.filter(Question.asker_id == user_id)
         return questions
 
@@ -97,18 +97,17 @@ class QuestionHandler(BaseAPIHandler):
     @auth_require
     def put(self):
         body = json.loads(self.request.body.decode('utf-8'))
-        question = body.get("question")
+        logger.info(body)
+        body = body.get("question")
 
-        keywords = question['keywords']
-        content = question['content']
-        pay = question['pay']
+        question = Question()
+        question.asker_id = self.current_user.id
 
-        question = Question(
-            keywords=keywords,
-            content=content,
-            pay=pay,
-            asker_id=self.user.id
-        )
+        atts = ['keywords', 'content', 'pay', 'attachments']
+        for att in atts:
+            v = body.get(att)
+            if v:
+                setattr(question, att, v)
 
         session = self.session
         session.add(question)
@@ -122,7 +121,7 @@ class AnswerKeywordsHandler(BaseAPIHandler):
     @auth_require
     def get_user_keywords(self):
         session = self.session
-        user_id = self.user.id
+        user_id = self.current_user.id
         keys = session.query(AnswerKeywords).filter(
             AnswerKeywords.user_id == user_id,
             AnswerKeywords.deleted == 0
@@ -147,7 +146,7 @@ class AnswerKeywordsHandler(BaseAPIHandler):
         p = body.get("keyword")
 
         keyword = p['keyword']
-        user_id = self.user.id
+        user_id = self.current_user.id
 
         k = AnswerKeywords(
             keyword=keyword,

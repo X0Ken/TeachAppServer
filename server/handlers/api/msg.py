@@ -16,7 +16,7 @@ class UnreadMsgHandler(BaseAPIHandler):
     def get(self):
         session = self.session
         msgs = session.query(Msg).filter(
-            Msg.receiver_id == self.user.id,
+            Msg.receiver_id == self.current_user.id,
             Msg.unread == 1
         )
         self.write({
@@ -32,7 +32,7 @@ class QuestionMsgHandler(BaseAPIHandler):
     @auth_require
     def get(self, qid):
         session = self.session
-        user_id = self.user.id
+        user_id = self.current_user.id
         msgs = session.query(Msg, func.max(Msg.id)).filter(
             Msg.typ == "question",
             Msg.typ_id == qid,
@@ -57,10 +57,10 @@ class QuestionUserMsgHandler(BaseAPIHandler):
             or_(
                 and_(
                     Msg.receiver_id == uid,
-                    Msg.sender_id == self.user.id
+                    Msg.sender_id == self.current_user.id
                 ),
                 and_(
-                    Msg.receiver_id == self.user.id,
+                    Msg.receiver_id == self.current_user.id,
                     Msg.sender_id == uid
                 )
             )
@@ -82,7 +82,7 @@ class QuestionUserMsgHandler(BaseAPIHandler):
         typ_id = qid
 
         with self.make_session() as session:
-            msg = Msg(sender_id=self.user.id, receiver_id=uid,
+            msg = Msg(sender_id=self.current_user.id, receiver_id=uid,
                       content=content, typ=typ, typ_id=typ_id)
             session.add(msg)
             session.flush()
@@ -96,7 +96,7 @@ class JobMsgHandler(BaseAPIHandler):
     @auth_require
     def get(self):
         session = self.session
-        user_id = self.user.id
+        user_id = self.current_user.id
         msgs = session.query(Msg, func.max(Msg.id)).join(
             TeacherJob,
             TeacherJob.id == Msg.typ_id,
@@ -125,10 +125,10 @@ class JobUserMsgHandler(BaseAPIHandler):
             or_(
                 and_(
                     Msg.receiver_id == uid,
-                    Msg.sender_id == self.user.id
+                    Msg.sender_id == self.current_user.id
                 ),
                 and_(
-                    Msg.receiver_id == self.user.id,
+                    Msg.receiver_id == self.current_user.id,
                     Msg.sender_id == uid
                 )
             )
@@ -150,7 +150,7 @@ class JobUserMsgHandler(BaseAPIHandler):
         typ_id = jid
 
         with self.make_session() as session:
-            msg = Msg(sender_id=self.user.id, receiver_id=uid,
+            msg = Msg(sender_id=self.current_user.id, receiver_id=uid,
                       content=content, typ=typ, typ_id=typ_id)
             session.add(msg)
             session.flush()
@@ -167,10 +167,10 @@ class UserMsgHandler(BaseAPIHandler):
         msgs = session.query(Msg).filter(or_(
             and_(
                 Msg.receiver_id == user_id,
-                Msg.sender_id == self.user.id
+                Msg.sender_id == self.current_user.id
             ),
             and_(
-                Msg.receiver_id == self.user.id,
+                Msg.receiver_id == self.current_user.id,
                 Msg.sender_id == user_id
             )
         ))
@@ -192,7 +192,7 @@ class UserMsgHandler(BaseAPIHandler):
         typ_id = msg['type_id']
 
         with self.make_session() as session:
-            msg = Msg(sender_id=self.user.id, receiver_id=receiver_id,
+            msg = Msg(sender_id=self.current_user.id, receiver_id=receiver_id,
                       content=content, typ=typ, typ_id=typ_id)
             session.add(msg)
             session.flush()
@@ -204,7 +204,7 @@ class UserMsgHandler(BaseAPIHandler):
     def post(self, sender_id):
         with self.make_session() as session:
             msgs = session.query(Msg).filter(
-                Msg.receiver_id == self.user.id,
+                Msg.receiver_id == self.current_user.id,
                 Msg.sender_id == sender_id
             )
             for msg in msgs:

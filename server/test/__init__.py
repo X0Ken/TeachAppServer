@@ -5,6 +5,7 @@ from tornado import options
 from tornado.testing import AsyncHTTPTestCase
 
 from server import app
+from server import log
 from server.models import User
 
 
@@ -15,6 +16,8 @@ class TestBase(AsyncHTTPTestCase):
             "--database_url=sqlite://",
             "--enable_fake_data=True"
         ])
+        logger = log.get_logger()
+        logger.disabled = True
         application = app.make_app()
         self.session = application.settings['session_factory'].make_session()
         return application

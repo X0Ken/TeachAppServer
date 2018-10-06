@@ -26,7 +26,7 @@ class TeacherJobHandler(BaseAPIHandler):
 
     @auth_require
     def only_me(self, jobs):
-        user_id = self.user.id
+        user_id = self.current_user.id
         jobs = jobs.filter(TeacherJob.provider_id == user_id)
         return jobs
 
@@ -47,8 +47,16 @@ class TeacherJobHandler(BaseAPIHandler):
     def put(self):
         session = self.session
         body = json.loads(self.request.body.decode('utf-8'))
-        job = body.get("teacherjob")
-        job = TeacherJob(provider_id=self.user.id, **job)
+        body = body.get("teacherjob")
+        job = TeacherJob(provider_id=self.current_user.id)
+
+        atts = ["method", "gender", "school", "highest_education", "pay",
+                "region", "subject", "time"]
+        for att in atts:
+            v = body.get(att)
+            if v:
+                setattr(job, att, v)
+
         session.add(job)
         session.flush()
         session.refresh(job)
@@ -83,13 +91,13 @@ class TeacherDetailHandler(BaseAPIHandler):
         teacher_info = body.get("teacher")
         session = self.session
 
-        teacher = session.query(Teacher).filter_by(id=self.user.id).first()
+        teacher = session.query(Teacher).filter_by(id=self.current_user.id).first()
         if teacher:
             for k, v in teacher_info.items():
                 setattr(teacher, k, v)
             teacher.update_at = datetime.datetime.utcnow()
         else:
-            teacher = Teacher(id=self.user.id, **teacher_info)
+            teacher = Teacher(id=self.current_user.id, **teacher_info)
             session.add(teacher)
         session.flush()
         session.refresh(teacher)
@@ -111,27 +119,34 @@ class TeacherFilterByJobHandler(BaseAPIHandler):
 
     @coroutine
     def get(self, jid):
-        with self.make_session() as session:
-            job = session.query(TeacherJob).filter(
-                TeacherJob.id == jid
-            ).first()
-            if not job:
-                self.bad_request("Job id not found")
-            teachers = session.query(Teacher).filter(Teacher.deleted == 0)
+        session = self.session
+        job = session.query(TeacherJob).filter(
+            TeacherJob.id == jid
+        ).first()
+        if not job:
+            self.bad_request("Job id not found")
+        teachers = session.query(Teacher).filter(
+            Teacher.deleted == 0,
+        )
 
-            attrs = [
-                ("method", Teacher.method),
-                ("gender", Teacher.gender),
-                ("school", Teacher.school),
-                ("highest_education", Teacher.highest_education),
-                ("region", Teacher.region),
-                ("subject", Teacher.subject),
-            ]
-            for attr, key in attrs:
-                v = getattr(job, attr, None)
-                if v:
-                    teachers = teachers.filter(key == v)
+        if self.current_user:
+            teachers = teachers.filter(
+                Teacher.id != self.current_user.id
+            )
 
-            self.write({
-                "teachers": [teacher.get_info() for teacher in teachers]
-            })
+        attrs = [
+            ("method", Teacher.method),
+            ("gender", Teacher.gender),
+            ("school", Teacher.school),
+            ("highest_education", Teacher.highest_education),
+            ("region", Teacher.region),
+            ("subject", Teacher.subject),
+        ]
+        for attr, key in attrs:
+            v = getattr(job, attr, None)
+            if v:
+                teachers = teachers.filter(key == v)
+
+        self.write({
+            "teachers": [teacher.get_info() for teacher in teachers]
+        })

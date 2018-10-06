@@ -13,10 +13,11 @@ from server.handlers.api.teacher import TeacherDetailHandler, \
 from server.handlers.api.teacher import TeacherHandler
 from server.handlers.api.teacher import TeacherJobDetailHandler
 from server.handlers.api.teacher import TeacherJobHandler
-from server.handlers.api.user import TokenHandler
+from server.handlers.api.user import TokenHandler, UserInfoHandler
 from server.handlers.api.user import UserDetailHandler
 from server.handlers.api.user import UserHandler
 from server.handlers.api.user import UserPropertyHandler
+from server.handlers.api.utils import FileHandler
 
 api_handers = [
     (r'/api/teachers', TeacherHandler),
@@ -27,6 +28,7 @@ api_handers = [
     (r'/api/users', UserHandler),
     (r'/api/users/([0-9]+)', UserDetailHandler),
     [r'/api/users/([0-9]+)/property', UserPropertyHandler],
+    (r'/api/users/info', UserInfoHandler),
     (r'/api/token', TokenHandler),
     (r'/api/questions', QuestionHandler),
     (r'/api/questions/([0-9]+)', QuestionDetailHandler),
@@ -42,4 +44,5 @@ api_handers = [
     (r'/api/orders/question/([0-9]+)', OrderQuestionHandler),
     (r'/api/answer_keywords', AnswerKeywordsHandler),
     (r'/api/answer_keywords/([0-9]+)', AnswerKeywordsDetailHandler),
+    (r'/api/upload', FileHandler),
 ]

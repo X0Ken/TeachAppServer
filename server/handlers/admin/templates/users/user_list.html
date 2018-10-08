@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}用户列表-人人教{% end %}
+
+{% block content %}
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>id</th>
+        <th>username</th>
+        <th>pic</th>
+        <th>role</th>
+        <th>token_id</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for u in users %}
+    <tr>
+        <td>{{ u.id }}</td>
+        <td>{{ u.username }}</td>
+        <td>{{ u.pic }}</td>
+        <td>{{ u.role }}</td>
+        <td>{{ u.token_id }}</td>
+    </tr>
+    {% end %}
+    </tbody>
+</table>
+{% end %}

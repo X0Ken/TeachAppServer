@@ -1,3 +1,4 @@
+from server import models as m
 from server.models import Msg, AnswerKeywords
 from server.models import Order
 from server.models import Question
@@ -37,7 +38,50 @@ user_info_list = [
         "role": "user",
         'pic': "/static/imgs/user2.jpg",
         "token_id": "370707741a0c41ef9d0e6a7d1fe2c043"
+    },
+    {
+        "id": 5,
+        "username": "碰碰",
+        "password": "password",
+        "role": "user",
+        'pic': "/static/imgs/user2.jpg",
+        "token_id": "370707741a0c41ef9d0e6a7d1fe2c043"
     }
+]
+
+user_info_info_list = [
+    {
+        "id": 1,
+        "name": 'zaizai',
+        "age": '14',
+        "gender": '男',
+        "education": '博士',
+        "self_evaluate": '超厉害的一个人,超厉害的一个人,超厉害的一个人，超厉害的一个人',
+    },
+    {
+        "id": 2,
+        "name": 'zaizai',
+        "age": '55',
+        "gender": '男',
+        "education": '博士',
+        "self_evaluate": '超厉害的一个人',
+    },
+    {
+        "id": 3,
+        "name": 'zaizai',
+        "age": '22',
+        "gender": '男',
+        "education": '硕士',
+        "self_evaluate": '超厉害的一个人',
+    },
+    {
+        "id": 4,
+        "name": 'zaizai',
+        "age": '37',
+        "gender": '男',
+        "education": '博士',
+        "self_evaluate": '超厉害的一个人',
+    },
 ]
 
 teacher_info_list = [
@@ -275,6 +319,13 @@ def fake_user(session):
             user = User(**user_info)
             session.add(user)
 
+    for user_info in user_info_info_list:
+        user = session.query(m.UserInfo).filter_by(
+            id=user_info['id']).first()
+        if not user:
+            user = m.UserInfo(**user_info)
+            session.add(user)
+
 
 def fake_teacher(session):
     for teacher_info in teacher_info_list:
@@ -330,6 +381,31 @@ def fake_answer_keyword(session):
             session.add(answer_keyword)
 
 
+tables = [
+    {
+        "table": m.School,
+        "data": [
+            {
+                "id": 1,
+                "name": "河北大学",
+            },
+            {
+                "id": 2,
+                "name": "河北农业大学",
+            },
+            {
+                "id": 3,
+                "name": "保定学院",
+            },
+            {
+                "id": 4,
+                "name": "河北金融学院",
+            },
+        ]
+    }
+]
+
+
 def insert_fake_data(session_factory):
     session = session_factory.make_session()
 
@@ -340,6 +416,14 @@ def insert_fake_data(session_factory):
     fake_msg(session)
     fake_order(session)
     fake_answer_keyword(session)
+
+    for t in tables:
+        for d in t['data']:
+            o = session.query(t['table']).filter_by(
+                id=d['id']).first()
+            if not o:
+                o = t['table'](**d)
+                session.add(o)
 
     session.commit()
     session.close()

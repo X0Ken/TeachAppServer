@@ -257,3 +257,23 @@ class Msg(DeclarativeBase, ObjectMixin):
             'type': self.typ,
             'type_id': self.typ_id
         }
+
+
+class School(DeclarativeBase, ObjectMixin):
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(255), nullable=False, unique=True)
+    department = Column(String(255))
+    location = Column(String(255))
+    level = Column(String(255))
+    remark = Column(String(255))
+
+    def get_info(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'department': self.department,
+            'location': self.location,
+            'level': self.level,
+            'remark': self.remark,
+        }

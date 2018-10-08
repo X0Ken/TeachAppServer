@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}教师列表-人人教{% end %}
+
+
+
+{% block content %}
+
+{% if info %}
+<div class="alert alert-success" role="alert">
+  {{ info }}
+</div>
+{% end %}
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>id</th>
+        <th>method</th>
+        <th>idcard</th>
+        <th>gender</th>
+        <th>school</th>
+        <th>highest_education</th>
+        <th>pay</th>
+        <th>region</th>
+        <th>subject</th>
+        <th>time</th>
+        <th>self_evaluate</th>
+        <th>score</th>
+        <th>create_at</th>
+        <th>update_at</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for t in teachers %}
+    <tr>
+        <td>{{ t.id }}</td>
+        <td>{{ t.method }}</td>
+        <td>{{ t.idcard }}</td>
+        <td>{{ t.gender }}</td>
+        <td>{{ t.school }}</td>
+        <td>{{ t.highest_education }}</td>
+        <td>{{ t.pay }}</td>
+        <td>{{ t.region }}</td>
+        <td>{{ t.subject }}</td>
+        <td>{{ t.time }}</td>
+        <td>{{ t.self_evaluate }}</td>
+        <td>{{ t.score }}</td>
+        <td>{{ t.create_at }}</td>
+        <td>{{ t.update_at }}</td>
+    </tr>
+    {% end %}
+    </tbody>
+</table>
+{% end %}

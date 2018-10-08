@@ -48,6 +48,7 @@ def make_app():
         session_factory=session_factory,
         static_path=static_path,
         cookie_secret="61oETzKXQAGaYdghdhgfhfhfg",
+        debug=True,
     )
 
 

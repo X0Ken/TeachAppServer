@@ -1,26 +1,32 @@
-{% extends "../base.html" %}
+{% extends "base.html" %}
 
 {% block title %}问题列表-人人教{% end %}
 
-{% block page %}
-<table style="width:100%">
-  <tr>
-    <th>id</th>
-    <th>keywords</th>
-    <th>attachments</th>
-    <th>pay</th>
-    <th>state</th>
-    <th>content</th>
-  </tr>
-  {% for q in questions %}
-  <tr>
-    <th>{{ q.id }}</th>
-    <th>{{ q.keywords }}</th>
-    <th>{{ q.attachments }}</th>
-    <th>{{ q.pay }}</th>
-    <th>{{ q.state }}</th>
-    <th>{{ q.content }}</th>
-  </tr>
-  {% end %}
+
+
+{% block content %}
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>id</th>
+        <th>keywords</th>
+        <th>attachments</th>
+        <th>pay</th>
+        <th>state</th>
+        <th>content</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for q in questions %}
+    <tr>
+        <td>{{ q.id }}</td>
+        <td>{{ q.keywords }}</td>
+        <td>{{ q.attachments }}</td>
+        <td>{{ q.pay }}</td>
+        <td>{{ q.state }}</td>
+        <td>{{ q.content }}</td>
+    </tr>
+    {% end %}
+    </tbody>
 </table>
 {% end %}

@@ -18,6 +18,7 @@ from server.handlers.api.user import UserDetailHandler
 from server.handlers.api.user import UserHandler
 from server.handlers.api.user import UserPropertyHandler
 from server.handlers.api.utils import FileHandler
+from server.handlers.api import schools
 
 api_handers = [
     (r'/api/teachers', TeacherHandler),
@@ -45,4 +46,5 @@ api_handers = [
     (r'/api/answer_keywords', AnswerKeywordsHandler),
     (r'/api/answer_keywords/([0-9]+)', AnswerKeywordsDetailHandler),
     (r'/api/upload', FileHandler),
+    (r'/api/schools', schools.SchoolsHandler),
 ]

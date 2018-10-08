@@ -5,7 +5,7 @@ from tornado.gen import coroutine
 
 from server.handlers.admin.base import BaseAdminHandler
 from server.handlers.admin.base import admin_require
-from server.models import User
+from server.models import User, UserInfo
 
 
 class LoginHandler(BaseAdminHandler):
@@ -46,8 +46,9 @@ class TokenListHandler(BaseAdminHandler):
     def get(self):
         session = self.session
         users = session.query(User)
-        token_list = [user.username + " : " + user.password + " : " + user.token_id
-                      for user in users]
+        token_list = [
+            user.username + " : " + user.password + " : " + user.token_id
+            for user in users]
 
         self.write("""<!DOCTYPE html>
 <html>
@@ -71,7 +72,28 @@ class TokenHandler(BaseAdminHandler):
     @admin_require
     def delete(self, user_id):
         session = self.session
-        user = session.query(User).filter(User.id ==  user_id).first()
+        user = session.query(User).filter(User.id == user_id).first()
         if user:
             user.token_id = uuid.uuid4().hex
         self.redirect("/admin/token")
+
+
+class UsersHandler(BaseAdminHandler):
+
+    @coroutine
+    def get(self):
+        session = self.session
+        users = session.query(User)
+        self.render("users/user_list.html", users=users)
+
+
+class UserInfosHandler(BaseAdminHandler):
+
+    @coroutine
+    def get(self):
+        session = self.session
+        user_infos = session.query(UserInfo)
+        self.render("users/info_list.html", user_infos=user_infos)
+
+
+        

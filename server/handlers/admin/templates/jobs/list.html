@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}工作列表-人人教{% end %}
+
+
+
+
+{% block content %}
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>id</th>
+        <th>method</th>
+        <th>gender</th>
+        <th>school</th>
+        <th>highest_education</th>
+        <th>pay</th>
+        <th>region</th>
+        <th>subject</th>
+        <th>time</th>
+        <th>provider_id</th>
+        <th>create_at</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for j in jobs %}
+    <tr>
+        <td>{{ j.id }}</td>
+        <td>{{ j.method }}</td>
+        <td>{{ j.gender }}</td>
+        <td>{{ j.school }}</td>
+        <td>{{ j.highest_education }}</td>
+        <td>{{ j.pay }}</td>
+        <td>{{ j.region }}</td>
+        <td>{{ j.subject }}</td>
+        <td>{{ j.time }}</td>
+        <td>{{ j.provider_id }}</td>
+        <td>{{ j.create_at }}</td>
+    </tr>
+    {% end %}
+    </tbody>
+</table>
+{% end %}

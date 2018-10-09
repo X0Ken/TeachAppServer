@@ -4,9 +4,9 @@ from datetime import datetime
 
 from tornado.gen import coroutine
 
+from server import models as m
 from server.handlers.admin.base import BaseAdminHandler
 from server.handlers.admin.base import admin_require
-from server import models as m
 
 
 class SchoolsHandler(BaseAdminHandler):
@@ -79,4 +79,3 @@ class SchoolAddHandler(BaseAdminHandler):
         self.redirect(
             "/admin/schools/add?info=学校({})已经添加成功".format(name)
         )
-

@@ -14,7 +14,6 @@ class TestBase(AsyncHTTPTestCase):
         options.parse_command_line([
             "",
             "--database_url=sqlite://",
-            "--enable_fake_data=True"
         ])
         logger = log.get_logger()
         logger.disabled = True

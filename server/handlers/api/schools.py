@@ -4,7 +4,8 @@ from tornado.gen import coroutine
 
 from server.handlers.api.base import BaseAPIHandler
 from server.handlers.api.base import auth_require
-from server.models import Order, School
+from server.models import Order
+from server.models import School
 
 
 class SchoolsHandler(BaseAPIHandler):
@@ -37,4 +38,3 @@ class SchoolsHandler(BaseAPIHandler):
         session.flush()
         session.refresh(s)
         self.write({"school": s.get_info()})
-

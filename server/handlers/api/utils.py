@@ -5,7 +5,8 @@ import string
 
 from tornado.gen import coroutine
 
-from server.conf import upload_path, root_path
+from server.conf import root_path
+from server.conf import upload_path
 from server.handlers.api.base import BaseAPIHandler
 from server.handlers.api.base import auth_require
 

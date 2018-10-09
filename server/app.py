@@ -10,10 +10,12 @@ from tornado_sqlalchemy import SessionMixin
 from tornado_sqlalchemy import make_session_factory
 
 from server import log
-from server.conf import upload_path, static_path, web_app_path
-from server.fake import insert_fake_data
+from server.conf import static_path
+from server.conf import upload_path
+from server.conf import web_app_path
 from server.handlers.admin import admin_handers
 from server.handlers.api import api_handers
+from server.init import insert_init_data
 from server.models import DeclarativeBase
 
 
@@ -31,8 +33,7 @@ def init():
 def make_app():
     session_factory = make_session_factory(options.database_url)
     DeclarativeBase.metadata.create_all(session_factory.engine)
-    if options.enable_fake_data:
-        insert_fake_data(session_factory)
+    insert_init_data(session_factory)
 
     handlers = [
         (r'/', IndexHandler),

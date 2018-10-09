@@ -10,7 +10,6 @@ from server.models import AnswerKeywords
 from server.models import Question
 from server.utils import strutils
 
-
 logger = log.get_logger()
 
 

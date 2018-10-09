@@ -1,24 +1,31 @@
-from server.handlers.api.msg import UnreadMsgHandler, QuestionMsgHandler, \
-    QuestionUserMsgHandler, JobMsgHandler, JobUserMsgHandler
+from server.handlers.api import regions
+from server.handlers.api import schools
+from server.handlers.api.msg import JobMsgHandler
+from server.handlers.api.msg import JobUserMsgHandler
+from server.handlers.api.msg import MsgChannelHandler
+from server.handlers.api.msg import QuestionMsgHandler
+from server.handlers.api.msg import QuestionUserMsgHandler
+from server.handlers.api.msg import UnreadMsgHandler
 from server.handlers.api.msg import UserMsgHandler
-from server.handlers.api.order import OrderDetailHandler, OrderJobHandler, \
-    OrderQuestionHandler
+from server.handlers.api.order import OrderDetailHandler
 from server.handlers.api.order import OrderHandler
+from server.handlers.api.order import OrderJobHandler
+from server.handlers.api.order import OrderQuestionHandler
 from server.handlers.api.question import AnswerKeywordsDetailHandler
 from server.handlers.api.question import AnswerKeywordsHandler
 from server.handlers.api.question import QuestionDetailHandler
 from server.handlers.api.question import QuestionHandler
-from server.handlers.api.teacher import TeacherDetailHandler, \
-    TeacherFilterByJobHandler
+from server.handlers.api.teacher import TeacherDetailHandler
+from server.handlers.api.teacher import TeacherFilterByJobHandler
 from server.handlers.api.teacher import TeacherHandler
 from server.handlers.api.teacher import TeacherJobDetailHandler
 from server.handlers.api.teacher import TeacherJobHandler
-from server.handlers.api.user import TokenHandler, UserInfoHandler
+from server.handlers.api.user import TokenHandler
 from server.handlers.api.user import UserDetailHandler
 from server.handlers.api.user import UserHandler
+from server.handlers.api.user import UserInfoHandler
 from server.handlers.api.user import UserPropertyHandler
 from server.handlers.api.utils import FileHandler
-from server.handlers.api import schools
 
 api_handers = [
     (r'/api/teachers', TeacherHandler),
@@ -39,6 +46,7 @@ api_handers = [
     (r'/api/msg/question/([0-9]+)/user/([0-9]+)', QuestionUserMsgHandler),
     (r'/api/msg/job', JobMsgHandler),
     (r'/api/msg/job/([0-9]+)/user/([0-9]+)', JobUserMsgHandler),
+    (r'/api/msg/channel', MsgChannelHandler),
     (r'/api/orders', OrderHandler),
     (r'/api/orders/([0-9]+)', OrderDetailHandler),
     (r'/api/orders/job/([0-9]+)', OrderJobHandler),
@@ -47,4 +55,5 @@ api_handers = [
     (r'/api/answer_keywords/([0-9]+)', AnswerKeywordsDetailHandler),
     (r'/api/upload', FileHandler),
     (r'/api/schools', schools.SchoolsHandler),
+    (r'/api/regions/([0-9]+)/(-?[0-9]+)', regions.RegionsHandler),
 ]

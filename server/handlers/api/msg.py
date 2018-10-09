@@ -1,12 +1,15 @@
 import json
 
-from sqlalchemy import and_, func
+from sqlalchemy import and_
+from sqlalchemy import func
 from sqlalchemy import or_
 from tornado.gen import coroutine
 
 from server.handlers.api.base import BaseAPIHandler
 from server.handlers.api.base import auth_require
-from server.models import Msg, Question, TeacherJob
+from server.models import Msg
+from server.models import Question
+from server.models import TeacherJob
 
 
 class UnreadMsgHandler(BaseAPIHandler):
@@ -19,6 +22,36 @@ class UnreadMsgHandler(BaseAPIHandler):
             Msg.receiver_id == self.current_user.id,
             Msg.unread == 1
         )
+        self.write({
+            "msgs": [
+                m.get_info() for m in msgs
+            ]
+        })
+
+
+class MsgChannelHandler(BaseAPIHandler):
+
+    @coroutine
+    @auth_require
+    def get(self):
+        session = self.session
+
+        msgs = session.query(Msg).filter(
+            Msg.id.in_(
+                session.query(func.max(Msg.id)).filter(
+                    or_(
+                        Msg.sender_id == self.current_user.id,
+                        Msg.receiver_id == self.current_user.id,
+                    ),
+                    Msg.deleted == 0
+                ).group_by(Msg.typ, Msg.typ_id)
+            )
+        ).group_by(Msg.typ, Msg.typ_id).order_by(
+            Msg.id.desc()
+        )
+
+
+
         self.write({
             "msgs": [
                 m.get_info() for m in msgs

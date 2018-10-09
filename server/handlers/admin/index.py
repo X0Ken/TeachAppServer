@@ -3,12 +3,15 @@ import uuid
 from datetime import datetime
 from datetime import timedelta
 
-from tornado.gen import coroutine
 import sqlalchemy as sa
+from tornado.gen import coroutine
 
 from server.handlers.admin.base import BaseAdminHandler
 from server.handlers.admin.base import admin_require
-from server.models import User, Question, TeacherJob, UserInfo
+from server.models import Question
+from server.models import TeacherJob
+from server.models import User
+from server.models import UserInfo
 
 
 class IndexHandler(BaseAdminHandler):
@@ -35,7 +38,6 @@ class IndexHandler(BaseAdminHandler):
         kwargs.update(
             user_growth_labels=user_growth_labels,
             user_growth_data=user_growth_data,
-            user_data=user_data
         )
 
     def last_7_date_question_growth(self, kwargs):

@@ -5,7 +5,8 @@ from tornado.gen import coroutine
 
 from server.handlers.admin.base import BaseAdminHandler
 from server.handlers.admin.base import admin_require
-from server.models import User, UserInfo
+from server.models import User
+from server.models import UserInfo
 
 
 class LoginHandler(BaseAdminHandler):
@@ -94,6 +95,3 @@ class UserInfosHandler(BaseAdminHandler):
         session = self.session
         user_infos = session.query(UserInfo)
         self.render("users/info_list.html", user_infos=user_infos)
-
-
-        

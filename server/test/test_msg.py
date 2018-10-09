@@ -3,7 +3,8 @@ import json
 from sqlalchemy import and_
 from sqlalchemy import or_
 
-from server.models import Msg, Question
+from server.models import Msg
+from server.models import Question
 from server.test import TestBase
 
 
@@ -146,3 +147,15 @@ class TestMsg(TestBase):
         self.assertEqual(response.code, 200)
         c2 = self.get_msg_count(user1.id, user2.id)
         self.assertEqual(count + 1, c2)
+
+    def test_channel_msg(self):
+        user1 = self.get_user(3)
+        response = self.fetch('/api/msg/channel',
+                              headers={"token-id": user1.token_id})
+        self.assertEqual(response.code, 200)
+        msgs = json.loads(response.body)['msgs']
+        self.assertEqual(len(msgs), 3)
+        self.assertListEqual(
+            [9, 6, 4],
+            [m['id'] for m in msgs]
+        )

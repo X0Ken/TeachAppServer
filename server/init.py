@@ -1,5 +1,6 @@
 from server import models as m
-from server.models import Msg, AnswerKeywords
+from server.models import AnswerKeywords
+from server.models import Msg
 from server.models import Order
 from server.models import Question
 from server.models import Teacher
@@ -402,11 +403,73 @@ tables = [
                 "name": "河北金融学院",
             },
         ]
+    },
+    {
+        "table": m.Region,
+        "data": [
+            {
+                'id': 1,
+                'name': '河北省',
+                'code': '',
+                'parent_id': -1,
+                'level': 1,
+            },
+            {
+                'id': 2,
+                'name': '保定市',
+                'code': '',
+                'parent_id': 1,
+                'level': 2,
+            },
+            {
+                'id': 3,
+                'name': '竞秀区',
+                'code': '',
+                'parent_id': 2,
+                'level': 3,
+            },
+            {
+                'id': 4,
+                'name': '莲池区',
+                'code': '',
+                'parent_id': 2,
+                'level': 3,
+            },
+            {
+                'id': 5,
+                'name': '满城区',
+                'code': '',
+                'parent_id': 2,
+                'level': 3,
+            },
+            {
+                'id': 6,
+                'name': '清苑区',
+                'code': '',
+                'parent_id': 2,
+                'level': 3,
+            },
+            {
+                'id': 7,
+                'name': '徐水区',
+                'code': '',
+                'parent_id': 2,
+                'level': 3,
+            },
+            {
+                'id': 8,
+                'name': '涞水县',
+                'code': '',
+                'parent_id': 2,
+                'level': 3,
+            },
+        ]
     }
 ]
 
 
-def insert_fake_data(session_factory):
+
+def insert_init_data(session_factory):
     session = session_factory.make_session()
 
     fake_user(session)

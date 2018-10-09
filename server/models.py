@@ -277,3 +277,21 @@ class School(DeclarativeBase, ObjectMixin):
             'level': self.level,
             'remark': self.remark,
         }
+
+
+class Region(DeclarativeBase, ObjectMixin):
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(255), nullable=False)
+    code = Column(String(255))
+    parent_id = Column(Integer, default=-1)
+    level = Column(Integer, default=1)
+
+    def get_info(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'code': self.code,
+            'parent_id': self.parent_id,
+            'level': self.level,
+        }

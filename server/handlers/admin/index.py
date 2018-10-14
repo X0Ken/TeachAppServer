@@ -93,11 +93,62 @@ class IndexHandler(BaseAdminHandler):
         info = session.query(
             UserInfo.education, sa.func.count(UserInfo.id)
         ).group_by(UserInfo.education)
-        data = {}
+
+        top_edu_labels = []
+        top_edu_value = []
+
         for e, c in info:
-            data[e] = c
+            top_edu_labels.append(e)
+            top_edu_value.append(c)
+
         kwargs.update(
-            data=data,
+            top_edu_labels=top_edu_labels,
+            top_edu_value=top_edu_value,
+        )
+
+    def user_top_gender(self, kwargs):
+        session = self.session
+        info = session.query(
+            UserInfo.gender, sa.func.count(UserInfo.id)
+        ).group_by(UserInfo.gender)
+
+        top_gender_labels = []
+        top_gender_value = []
+
+        for e, c in info:
+            top_gender_labels.append(e)
+            top_gender_value.append(c)
+
+        kwargs.update(
+            top_gender_labels=top_gender_labels,
+            top_gender_value=top_gender_value,
+        )
+
+    def user_top_age(self, kwargs):
+        session = self.session
+        age_range = [
+            (0, 18),
+            (19, 23),
+            (24, 31),
+            (32, 50),
+            (50, 100),
+        ]
+
+        top_age_labels = []
+        top_age_value = []
+        for b, e in age_range:
+            top_age_labels.append("{}-{}".format(b, e))
+            info = session.query(
+                sa.func.count(UserInfo.id)
+            ).filter(
+                UserInfo.age >= b,
+                UserInfo.age <= e,
+            ).first()
+            top_age_value.append(info[0])
+
+        kwargs.update(
+            top_age_labels=top_age_labels,
+            top_age_value=top_age_value,
         )
 
 
@@ -108,6 +159,9 @@ class IndexHandler(BaseAdminHandler):
         self.last_7_date_user_growth(kwargs)
         self.last_7_date_question_growth(kwargs)
         self.last_7_date_job_growth(kwargs)
+        self.user_top_edu(kwargs)
+        self.user_top_gender(kwargs)
+        self.user_top_age(kwargs)
 
         self.render(
             "index/index.html",

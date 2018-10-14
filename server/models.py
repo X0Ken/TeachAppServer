@@ -90,6 +90,30 @@ class UserInfo(DeclarativeBase, ObjectMixin):
         }
 
 
+class UserEvaluate(DeclarativeBase, ObjectMixin):
+
+    id = Column(Integer, primary_key=True)
+    order_id = Column(Integer, nullable=False)
+    user_id = Column(Integer)
+    score = Column(Integer)
+    content = Column(String(255))
+    provider_id = Column(Integer)
+
+    def get_info(self):
+        create_at = self.create_at.strftime('%Y-%m-%d %H:%M:%S') \
+            if self.create_at else None
+
+        return {
+            "id": self.id,
+            "order_id": self.order_id,
+            "user_id": self.user_id,
+            "provider_id": self.provider_id,
+            "score": self.score,
+            "content": self.content,
+            "create_at": create_at,
+        }
+
+
 class UserProperty(DeclarativeBase, ObjectMixin):
 
     id = Column(Integer, primary_key=True)

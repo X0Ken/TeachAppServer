@@ -30,13 +30,13 @@ class TestMsg(TestBase):
         return count
 
     def test_unauth(self):
-        response = self.fetch('/api/msg')
+        response = self.fetch('/api/msgs/unread')
         self.assertEqual(response.code, 401)
 
     def test_list_unread(self):
         user = self.get_user()
         count = self.get_unread_count(user.id)
-        response = self.fetch('/api/msg',
+        response = self.fetch('/api/msgs/unread',
                               headers={"token-id": user.token_id})
         self.assertEqual(response.code, 200)
         self.assertGreater(count, 0)
@@ -96,7 +96,7 @@ class TestMsg(TestBase):
         msgs = json.loads(response.body)['msgs']
         self.assertEqual(len(msgs), 2)
         self.assertListEqual(
-            [2, 3],
+            [3, 2],
             [m['id'] for m in msgs]
         )
 
@@ -126,7 +126,7 @@ class TestMsg(TestBase):
         msgs = json.loads(response.body)['msgs']
         self.assertEqual(len(msgs), 2)
         self.assertListEqual(
-            [6, 9],
+            [9, 6],
             [m['id'] for m in msgs]
         )
 

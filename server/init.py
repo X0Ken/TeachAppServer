@@ -464,9 +464,37 @@ tables = [
                 'level': 3,
             },
         ]
-    }
+    },
+    {
+        "table": m.UserEvaluate,
+        "data": [
+            {
+                "id": 1,
+                "order_id": 1,
+                "user_id": 3,
+                "provider_id": 4,
+                "score": 5,
+                "content": "很好",
+            },
+            {
+                "id": 2,
+                "order_id": 1,
+                "user_id": 4,
+                "provider_id": 3,
+                "score": 5,
+                "content": "不错",
+            },
+            {
+                "id": 3,
+                "order_id": 2,
+                "user_id": 3,
+                "provider_id": 2,
+                "score": 4,
+                "content": "一般",
+            },
+        ]
+    },
 ]
-
 
 
 def insert_init_data(session_factory):

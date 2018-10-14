@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 
 from sqlalchemy import and_
 from sqlalchemy import func
@@ -8,7 +9,6 @@ from tornado.gen import coroutine
 from server.handlers.api.base import BaseAPIHandler
 from server.handlers.api.base import auth_require
 from server.models import Msg
-from server.models import Question
 from server.models import TeacherJob
 
 
@@ -20,13 +20,39 @@ class UnreadMsgHandler(BaseAPIHandler):
         session = self.session
         msgs = session.query(Msg).filter(
             Msg.receiver_id == self.current_user.id,
-            Msg.unread == 1
+            Msg.unread == 1,
+            Msg.deleted == 0
         )
         self.write({
             "msgs": [
                 m.get_info() for m in msgs
             ]
         })
+
+
+class MsgHandler(BaseAPIHandler):
+
+    @coroutine
+    @auth_require
+    def post(self, msg_id):
+        with self.make_session() as session:
+            msg = session.query(Msg).filter(
+                Msg.id == msg_id
+            ).first()
+
+            if not msg:
+                self.set_status(404)
+                self.write({"error": "Not found!"})
+                return
+
+            msg.unread = 0
+            msg.update_at = datetime.now()
+
+            self.write({
+                "msg": [
+                    msg.get_info()
+                ]
+            })
 
 
 class MsgChannelHandler(BaseAPIHandler):
@@ -50,8 +76,6 @@ class MsgChannelHandler(BaseAPIHandler):
             Msg.id.desc()
         )
 
-
-
         self.write({
             "msgs": [
                 m.get_info() for m in msgs
@@ -66,14 +90,20 @@ class QuestionMsgHandler(BaseAPIHandler):
     def get(self, qid):
         session = self.session
         user_id = self.current_user.id
-        msgs = session.query(Msg, func.max(Msg.id)).filter(
-            Msg.typ == "question",
-            Msg.typ_id == qid,
-            Msg.sender_id != user_id
-        ).group_by(Msg.sender_id)
+
+        msgs = session.query(Msg).filter(
+            Msg.id.in_(
+                session.query(func.max(Msg.id)).filter(
+                    Msg.typ == "question",
+                    Msg.typ_id == qid,
+                    Msg.sender_id != user_id
+                ).group_by(Msg.sender_id)
+            )
+        ).order_by(Msg.id.desc())
+
         self.write({
             "msgs": [
-                m.get_info() for m, ign in msgs
+                m.get_info() for m in msgs
             ]
         })
 
@@ -116,7 +146,7 @@ class QuestionUserMsgHandler(BaseAPIHandler):
 
         with self.make_session() as session:
             msg = Msg(sender_id=self.current_user.id, receiver_id=uid,
-                      content=content, typ=typ, typ_id=typ_id)
+                      content=content, typ=typ, typ_id=typ_id, unread=1)
             session.add(msg)
             session.flush()
             session.refresh(msg)
@@ -130,7 +160,10 @@ class JobMsgHandler(BaseAPIHandler):
     def get(self):
         session = self.session
         user_id = self.current_user.id
-        msgs = session.query(Msg, func.max(Msg.id)).join(
+
+        msgs = session.query(Msg).filter(
+            Msg.id.in_(
+                session.query(func.max(Msg.id)).join(
             TeacherJob,
             TeacherJob.id == Msg.typ_id,
         ).filter(
@@ -139,9 +172,12 @@ class JobMsgHandler(BaseAPIHandler):
             Msg.sender_id != user_id,
             TeacherJob.provider_id != user_id
         ).group_by(Msg.sender_id)
+            )
+        ).order_by(Msg.id.desc())
+
         self.write({
             "msgs": [
-                m.get_info() for m, ign in msgs
+                m.get_info() for m in msgs
             ]
         })
 
@@ -184,7 +220,7 @@ class JobUserMsgHandler(BaseAPIHandler):
 
         with self.make_session() as session:
             msg = Msg(sender_id=self.current_user.id, receiver_id=uid,
-                      content=content, typ=typ, typ_id=typ_id)
+                      content=content, typ=typ, typ_id=typ_id, unread=1)
             session.add(msg)
             session.flush()
             session.refresh(msg)

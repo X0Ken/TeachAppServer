@@ -15,14 +15,9 @@ from server.conf import upload_path
 from server.conf import web_app_path
 from server.handlers.admin import admin_handers
 from server.handlers.api import api_handers
+from server.handlers.web import web_handers
 from server.init import insert_init_data
 from server.models import DeclarativeBase
-
-
-class IndexHandler(RequestHandler, SessionMixin):
-    @coroutine
-    def get(self):
-        self.redirect("/app/index.html")
 
 
 def init():
@@ -36,12 +31,12 @@ def make_app():
     insert_init_data(session_factory)
 
     handlers = [
-        (r'/', IndexHandler),
         (r"/static/(.*)", StaticFileHandler, {"path": static_path}),
         (r"/uploads/(.*)", StaticFileHandler, {"path": upload_path}),
         (r"/app/(.*)", StaticFileHandler, {"path": web_app_path}),
         (r"/(config\.xml)", StaticFileHandler, {"path": web_app_path}),
     ]
+    handlers.extend(web_handers)
     handlers.extend(api_handers)
     handlers.extend(admin_handers)
     return Application(

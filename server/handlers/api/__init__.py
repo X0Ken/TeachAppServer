@@ -1,8 +1,10 @@
+from server.handlers.api import evaluates
 from server.handlers.api import regions
 from server.handlers.api import schools
 from server.handlers.api.msg import JobMsgHandler
 from server.handlers.api.msg import JobUserMsgHandler
 from server.handlers.api.msg import MsgChannelHandler
+from server.handlers.api.msg import MsgHandler
 from server.handlers.api.msg import QuestionMsgHandler
 from server.handlers.api.msg import QuestionUserMsgHandler
 from server.handlers.api.msg import UnreadMsgHandler
@@ -40,7 +42,8 @@ api_handers = [
     (r'/api/token', TokenHandler),
     (r'/api/questions', QuestionHandler),
     (r'/api/questions/([0-9]+)', QuestionDetailHandler),
-    (r'/api/msg', UnreadMsgHandler),
+    (r'/api/msgs/unread', UnreadMsgHandler),
+    (r'/api/msgs/read/([0-9]+)', MsgHandler),
     (r'/api/msg/([0-9]+)', UserMsgHandler),
     (r'/api/msg/question/([0-9]+)', QuestionMsgHandler),
     (r'/api/msg/question/([0-9]+)/user/([0-9]+)', QuestionUserMsgHandler),
@@ -56,4 +59,6 @@ api_handers = [
     (r'/api/upload', FileHandler),
     (r'/api/schools', schools.SchoolsHandler),
     (r'/api/regions/([0-9]+)/(-?[0-9]+)', regions.RegionsHandler),
+    (r'/api/evaluates/([0-9]+)', evaluates.EvaluatesHandler),
+    (r'/api/evaluates/([0-9]+)/([0-9]+)', evaluates.EvaluateDetailHandler),
 ]

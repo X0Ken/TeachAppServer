@@ -11,7 +11,7 @@
 
 <div class="ml-2 mt-2 container-fluid">
     <div class="row mb-5">
-        <div class="col-sm-4 col-xl-3">
+        <div class="col-sm-4">
             <div class="card">
                 <canvas id="userGrowth" width="200" height="100"></canvas>
                 <div class="card-body">
@@ -20,7 +20,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-4 col-xl-3">
+        <div class="col-sm-4">
             <div class="card">
                 <canvas id="questionGrowth" width="200" height="100"></canvas>
                 <div class="card-body">
@@ -29,7 +29,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-4 col-xl-3">
+        <div class="col-sm-4">
             <div class="card">
                 <canvas id="jobGrowth" width="200" height="100"></canvas>
                 <div class="card-body">
@@ -42,13 +42,33 @@
     </div>
 
     <div class="row">
-        <div class="col-sm-4 col-xl-3">
+        <div class="col-sm-4">
             <div class="card">
-                <canvas id="myChart" width="200" height="100"></canvas>
+                <canvas id="topEdu" width="200" height="100"></canvas>
 
                 <div class="card-body">
-                    <p class="card-text">Some quick example text to build.</p>
-                    <a href="#" class="btn btn-primary">查看详情</a>
+                    <p class="card-text">受教育程度</p>
+                    <a href="/admin/users/infos" class="btn btn-primary">查看详情</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="card">
+                <canvas id="topGender" width="200" height="100"></canvas>
+
+                <div class="card-body">
+                    <p class="card-text">性别分布</p>
+                    <a href="/admin/users/infos" class="btn btn-primary">查看详情</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="card">
+                <canvas id="topAge" width="200" height="100"></canvas>
+
+                <div class="card-body">
+                    <p class="card-text">年龄分布</p>
+                    <a href="/admin/users/infos" class="btn btn-primary">查看详情</a>
                 </div>
             </div>
         </div>
@@ -103,27 +123,83 @@
         });
 
 
-        var ctx = document.getElementById("myChart").getContext('2d');
-var scatterChart = new Chart(ctx, {
-    type: 'pie',
-    data: {
-        labels: ['a', 'b', 'c'],
-        datasets: [{
-            label: 'Scatter Dataset',
-            data: [12,15,19],
-            borderColor: [
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            backgroundColor: [
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-        }]
-    },
-});
+        var ctx = document.getElementById("topEdu").getContext('2d');
+        var top_edu_labels = {% raw json_encode(top_edu_labels) %};
+        var top_edu_value = {% raw json_encode(top_edu_value) %};
+        var myChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: top_edu_labels,
+                datasets: [{
+                    data: top_edu_value,
+                    borderColor: [
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(255, 206, 86, 1)'
+                    ],
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(255, 206, 86, 0.2)'
+                    ],
+                }]
+            },
+        });
+
+        var ctx = document.getElementById("topGender").getContext('2d');
+        var top_gender_labels = {% raw json_encode(top_gender_labels) %};
+        var top_gender_value = {% raw json_encode(top_gender_value) %};
+        var myChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: top_gender_labels,
+                datasets: [{
+                    data: top_gender_value,
+                    borderColor: [
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(255, 206, 86, 1)'
+                    ],
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(255, 206, 86, 0.2)'
+                    ],
+                }]
+            },
+        });
+        var ctx = document.getElementById("topAge").getContext('2d');
+        var top_age_labels = {% raw json_encode(top_age_labels) %};
+        var top_age_value = {% raw json_encode(top_age_value) %};
+        var myChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: top_age_labels,
+                datasets: [{
+                    data: top_age_value,
+                    borderColor: [
+                        'rgba(255,99,132,1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                }]
+            },
+        });
     });
 
 </script>

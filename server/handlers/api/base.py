@@ -1,9 +1,9 @@
 from functools import wraps
 
 from tornado.web import RequestHandler
-from tornado_sqlalchemy import SessionMixin
 
 from server.models import User
+from server.tornado_sqlalchemy import SessionMixin
 
 
 class BaseAPIHandler(SessionMixin, RequestHandler):
@@ -33,10 +33,6 @@ class BaseAPIHandler(SessionMixin, RequestHandler):
             return None
         return user
 
-    def initialize(self):
-        super(BaseAPIHandler, self).initialize()
-        self._session = self._make_session()
-
 
 def auth_require(f):
     @wraps(f)
@@ -48,14 +44,3 @@ def auth_require(f):
         return f(self, *args, **kwargs)
     return wrapper
 
-
-def admin_require(f):
-    @wraps(f)
-    def wrapper(self, *args, **kwargs):
-        user = self.current_user
-        if not user or user.role != 'admin':
-            self.set_status(401)
-            self.write({"error": "Auth invalid!"})
-            return
-        return f(self, *args, **kwargs)
-    return wrapper

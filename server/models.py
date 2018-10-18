@@ -1,12 +1,14 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import Column
+from sqlalchemy import Column, ForeignKey
 from sqlalchemy import DateTime
 from sqlalchemy import Integer
 from sqlalchemy import String
 from sqlalchemy.ext.declarative import declared_attr
-from tornado_sqlalchemy import declarative_base
+from sqlalchemy.orm import relationship
+
+from server.tornado_sqlalchemy import declarative_base
 
 DeclarativeBase = declarative_base()
 
@@ -49,6 +51,11 @@ class User(DeclarativeBase, ObjectMixin):
     role = Column(String(255))
     token_id = Column(String(255), default=default_uuid)
 
+    jobs = relationship("TeacherJob", back_populates="provider")
+    teacher = relationship("Teacher", back_populates="user")
+    info = relationship("UserInfo", back_populates="user")
+    questions = relationship("Question", back_populates="asker")
+
     def get_info(self):
         return {
             "id": self.id,
@@ -65,12 +72,14 @@ class User(DeclarativeBase, ObjectMixin):
 
 class UserInfo(DeclarativeBase, ObjectMixin):
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, ForeignKey('user.id'), primary_key=True)
     name = Column(String(255))
     age = Column(Integer)
     education = Column(String(255))
     gender = Column(String(255))
     self_evaluate = Column(String(255))
+
+    user = relationship("User", back_populates="info")
 
     def get_info(self):
         create_at = self.create_at.strftime('%Y-%m-%d %H:%M:%S') \
@@ -146,7 +155,9 @@ class TeacherJob(DeclarativeBase, ObjectMixin):
     region = Column(String(255))
     subject = Column(String(255))
     time = Column(String(255))
-    provider_id = Column(Integer)
+    provider_id = Column(Integer, ForeignKey('user.id'))
+
+    provider = relationship("User", back_populates="jobs")
 
     def get_info(self):
         return {
@@ -166,7 +177,7 @@ class TeacherJob(DeclarativeBase, ObjectMixin):
 
 class Teacher(DeclarativeBase, ObjectMixin):
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, ForeignKey('user.id'), primary_key=True)
     method = Column(String(255))
     idcard = Column(String(255))
     gender = Column(String(255))
@@ -179,6 +190,8 @@ class Teacher(DeclarativeBase, ObjectMixin):
     time = Column(String(255))
     self_evaluate = Column(String(255))
     score = Column(Integer, default=-1)
+
+    user = relationship("User", back_populates="teacher")
 
     def get_info(self):
         return {
@@ -210,8 +223,10 @@ class Question(DeclarativeBase, ObjectMixin):
     keywords = Column(String(255))
     pay = Column(Integer)
     attachments = Column(String(255))
-    asker_id = Column(Integer)
+    asker_id = Column(Integer, ForeignKey('user.id'))
     state = Column(Integer, default=0)
+
+    asker = relationship("User", back_populates="questions")
 
     def get_info(self):
         return {

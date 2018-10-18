@@ -8,18 +8,22 @@
 <table class="table table-striped">
     <thead>
     <tr>
+        <th>提问者</th>
         <th>关键词</th>
         <th>附件</th>
         <th>金额</th>
+        <th>状态</th>
         <th>内容</th>
     </tr>
     </thead>
     <tbody>
     {% for q in questions %}
     <tr>
-        <td>{{ q.keywords }}</td>
-        <td>{{ q.attachments }}</td>
+        <td>{{ q.asker.username }}</td>
+        <td>{% if q.keywords %}{{ q.keywords }}{% end %}</td>
+        <td>{% if q.attachments %}{{ q.attachments }}{% else %}无{% end %}</td>
         <td>{{ q.pay }}</td>
+        <td>{% if q.state==1 %}已解决{% else %}未解决{% end %}</td>
         <td>{{ q.content }}</td>
     </tr>
     {% end %}

@@ -1,13 +1,9 @@
 import os
 
-from tornado.gen import coroutine
 from tornado.ioloop import IOLoop
 from tornado.options import options
 from tornado.web import Application
-from tornado.web import RequestHandler
 from tornado.web import StaticFileHandler
-from tornado_sqlalchemy import SessionMixin
-from tornado_sqlalchemy import make_session_factory
 
 from server import log
 from server.conf import static_path
@@ -18,6 +14,7 @@ from server.handlers.api import api_handers
 from server.handlers.web import web_handers
 from server.init import insert_init_data
 from server.models import DeclarativeBase
+from server.tornado_sqlalchemy import make_session_factory
 
 
 def init():

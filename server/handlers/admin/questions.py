@@ -4,7 +4,6 @@ import uuid
 from tornado.gen import coroutine
 
 from server.handlers.admin.base import BaseAdminHandler
-from server.handlers.admin.base import admin_require
 from server.models import Question
 from server.models import User
 

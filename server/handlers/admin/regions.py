@@ -6,13 +6,11 @@ from tornado.gen import coroutine
 
 from server import models as m
 from server.handlers.admin.base import BaseAdminHandler
-from server.handlers.admin.base import admin_require
 
 
 class RegionsHandler(BaseAdminHandler):
 
     @coroutine
-    @admin_require
     def get(self):
         session = self.session
         info = self.get_argument('info', None)
@@ -25,7 +23,6 @@ class RegionsHandler(BaseAdminHandler):
 class RegionDeleteHandler(BaseAdminHandler):
 
     @coroutine
-    @admin_require
     def post(self, *args, **kwargs):
         session = self.session
         id = self.get_argument('id', None)
@@ -42,7 +39,6 @@ class RegionDeleteHandler(BaseAdminHandler):
 class RegionAddHandler(BaseAdminHandler):
 
     @coroutine
-    @admin_require
     def get(self):
         session = self.session
         regions = session.query(m.Region)
@@ -51,7 +47,6 @@ class RegionAddHandler(BaseAdminHandler):
         self.render("regions/add.html", regions=regions, info=info, err=err)
 
     @coroutine
-    @admin_require
     def post(self):
         session = self.session
         name = self.get_argument('name', None)

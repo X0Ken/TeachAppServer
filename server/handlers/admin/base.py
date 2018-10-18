@@ -1,18 +1,18 @@
 import os
-from functools import wraps
 
 from tornado.web import RequestHandler
-from tornado_sqlalchemy import SessionMixin
 
 from server.models import User
+from server.tornado_sqlalchemy import SessionMixin
 
 
-class BaseAdminHandler(SessionMixin, RequestHandler):
-    user = None
-    loader = None
+class BaseHandler(SessionMixin, RequestHandler):
 
     def get_template_path(self):
         return os.path.join(os.path.dirname(__file__), "templates")
+
+
+class BaseAdminHandler(BaseHandler):
 
     def get_current_user(self):
         token_id = self.get_cookie('token-id')
@@ -23,17 +23,7 @@ class BaseAdminHandler(SessionMixin, RequestHandler):
             return None
         return user
 
-    def initialize(self):
-        super(BaseAdminHandler, self).initialize()
-        self._session = self._make_session()
-
-
-def admin_require(f):
-    @wraps(f)
-    def wrapper(self, *args, **kwargs):
+    def prepare(self):
         user = self.current_user
         if not user or user.role != 'admin':
             self.redirect("/admin/login")
-            return
-        return f(self, *args, **kwargs)
-    return wrapper

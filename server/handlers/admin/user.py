@@ -3,13 +3,12 @@ import uuid
 
 from tornado.gen import coroutine
 
-from server.handlers.admin.base import BaseAdminHandler
-from server.handlers.admin.base import admin_require
+from server.handlers.admin.base import BaseAdminHandler, BaseHandler
 from server.models import User
 from server.models import UserInfo
 
 
-class LoginHandler(BaseAdminHandler):
+class LoginHandler(BaseHandler):
 
     @coroutine
     def get(self):
@@ -43,7 +42,6 @@ class LoginHandler(BaseAdminHandler):
 class TokenListHandler(BaseAdminHandler):
 
     @coroutine
-    @admin_require
     def get(self):
         session = self.session
         users = session.query(User)
@@ -70,7 +68,6 @@ class TokenListHandler(BaseAdminHandler):
 class TokenHandler(BaseAdminHandler):
 
     @coroutine
-    @admin_require
     def delete(self, user_id):
         session = self.session
         user = session.query(User).filter(User.id == user_id).first()

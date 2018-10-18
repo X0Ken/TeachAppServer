@@ -7,7 +7,6 @@ import sqlalchemy as sa
 from tornado.gen import coroutine
 
 from server.handlers.admin.base import BaseAdminHandler
-from server.handlers.admin.base import admin_require
 from server.models import Question
 from server.models import TeacherJob
 from server.models import User
@@ -166,7 +165,6 @@ class IndexHandler(BaseAdminHandler):
         )
 
     @coroutine
-    @admin_require
     def get(self):
         kwargs = {}
         self.last_7_date_user_growth(kwargs)

@@ -9,6 +9,7 @@
 <table class="table table-striped">
     <thead>
     <tr>
+        <th>创建者</th>
         <th>方式</th>
         <th>性别</th>
         <th>学校</th>
@@ -23,6 +24,7 @@
     <tbody>
     {% for j in jobs %}
     <tr>
+        <td>{{ j.provider.username }}</td>
         <td>{{ j.method }}</td>
         <td>{{ j.gender }}</td>
         <td>{{ j.school }}</td>

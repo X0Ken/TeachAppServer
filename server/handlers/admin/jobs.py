@@ -15,5 +15,5 @@ class JobsHandler(BaseAdminHandler):
     @coroutine
     def get(self):
         session = self.session
-        jobs = session.query(TeacherJob)
+        jobs = session.query(TeacherJob).order_by(TeacherJob.id.desc())
         self.render("jobs/list.html", jobs=jobs)

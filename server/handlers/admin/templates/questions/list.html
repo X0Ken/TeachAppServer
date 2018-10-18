@@ -8,22 +8,18 @@
 <table class="table table-striped">
     <thead>
     <tr>
-        <th>id</th>
-        <th>keywords</th>
-        <th>attachments</th>
-        <th>pay</th>
-        <th>state</th>
-        <th>content</th>
+        <th>关键词</th>
+        <th>附件</th>
+        <th>金额</th>
+        <th>内容</th>
     </tr>
     </thead>
     <tbody>
     {% for q in questions %}
     <tr>
-        <td>{{ q.id }}</td>
         <td>{{ q.keywords }}</td>
         <td>{{ q.attachments }}</td>
         <td>{{ q.pay }}</td>
-        <td>{{ q.state }}</td>
         <td>{{ q.content }}</td>
     </tr>
     {% end %}

@@ -48,8 +48,9 @@ class IndexHandler(BaseAdminHandler):
         question_growth_labels = [(now - timedelta(days=d)).strftime('%d')
                                   for d in range(7, 0, -1)]
 
-        question_data = session.query(sa.func.DATE_FORMAT(Question.create_at, '%d'),
-                                  sa.func.count(Question.id)).filter(
+        question_data = session.query(
+            sa.func.DATE_FORMAT(Question.create_at, '%d'),
+            sa.func.count(Question.id)).filter(
             sa.func.DATE_FORMAT(Question.create_at, '%Y-%m-%d').in_(dates)
         ).group_by(
             sa.func.DATE_FORMAT(Question.create_at, '%d')).all()
@@ -70,10 +71,11 @@ class IndexHandler(BaseAdminHandler):
         dates = [(now - timedelta(days=d)).strftime('%Y-%m-%d') for d in
                  range(7, 0, -1)]
         job_growth_labels = [(now - timedelta(days=d)).strftime('%d') for d in
-                              range(7, 0, -1)]
+                             range(7, 0, -1)]
 
-        job_data = session.query(sa.func.DATE_FORMAT(TeacherJob.create_at, '%d'),
-                                  sa.func.count(TeacherJob.id)).filter(
+        job_data = session.query(
+            sa.func.DATE_FORMAT(TeacherJob.create_at, '%d'),
+            sa.func.count(TeacherJob.id)).filter(
             sa.func.DATE_FORMAT(TeacherJob.create_at, '%Y-%m-%d').in_(dates)
         ).group_by(
             sa.func.DATE_FORMAT(TeacherJob.create_at, '%d')).all()
@@ -101,6 +103,10 @@ class IndexHandler(BaseAdminHandler):
             top_edu_labels.append(e)
             top_edu_value.append(c)
 
+        top_edu_labels = list(map(
+            lambda x: x if x else "未知",
+            top_edu_labels))
+
         kwargs.update(
             top_edu_labels=top_edu_labels,
             top_edu_value=top_edu_value,
@@ -118,6 +124,10 @@ class IndexHandler(BaseAdminHandler):
         for e, c in info:
             top_gender_labels.append(e)
             top_gender_value.append(c)
+
+        top_gender_labels = list(map(
+            lambda x: x if x else "未知",
+            top_gender_labels))
 
         kwargs.update(
             top_gender_labels=top_gender_labels,
@@ -146,11 +156,14 @@ class IndexHandler(BaseAdminHandler):
             ).first()
             top_age_value.append(info[0])
 
+        top_age_labels = list(map(
+            lambda x: x if x else "未知",
+            top_age_labels))
+
         kwargs.update(
             top_age_labels=top_age_labels,
             top_age_value=top_age_value,
         )
-
 
     @coroutine
     @admin_require

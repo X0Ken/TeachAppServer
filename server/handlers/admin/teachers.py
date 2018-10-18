@@ -16,5 +16,5 @@ class TeachersHandler(BaseAdminHandler):
     @coroutine
     def get(self):
         session = self.session
-        teachers = session.query(Teacher)
+        teachers = session.query(Teacher).order_by(Teacher.id.desc())
         self.render("teachers/list.html", teachers=teachers, info=None)

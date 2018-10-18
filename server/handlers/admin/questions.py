@@ -14,5 +14,5 @@ class QuestionsHandler(BaseAdminHandler):
     @coroutine
     def get(self):
         session = self.session
-        questions = session.query(Question)
+        questions = session.query(Question).order_by(Question.id.desc())
         self.render("questions/list.html", questions=questions)

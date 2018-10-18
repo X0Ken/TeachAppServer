@@ -79,6 +79,10 @@
 {% block script %}
 <script>
     $(function () {
+        Chart.defaults.global.plugins.labels = {
+            render: 'value'
+        };
+
         var ctx = document.getElementById("userGrowth").getContext('2d');
         var user_growth_labels = {% raw json_encode(user_growth_labels) %};
         var user_growth_data = {% raw json_encode(user_growth_data) %};

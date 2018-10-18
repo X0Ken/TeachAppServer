@@ -33,6 +33,10 @@ class BaseAPIHandler(SessionMixin, RequestHandler):
             return None
         return user
 
+    def initialize(self):
+        super(BaseAPIHandler, self).initialize()
+        self._session = self._make_session()
+
 
 def auth_require(f):
     @wraps(f)

@@ -84,7 +84,7 @@ class UsersHandler(BaseAdminHandler):
     @coroutine
     def get(self):
         session = self.session
-        users = session.query(User)
+        users = session.query(User).order_by(User.id.desc())
         self.render("users/user_list.html", users=users)
 
 
@@ -93,5 +93,5 @@ class UserInfosHandler(BaseAdminHandler):
     @coroutine
     def get(self):
         session = self.session
-        user_infos = session.query(UserInfo)
+        user_infos = session.query(UserInfo).order_by(UserInfo.id.desc())
         self.render("users/info_list.html", user_infos=user_infos)

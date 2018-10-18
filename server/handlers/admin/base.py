@@ -23,6 +23,10 @@ class BaseAdminHandler(SessionMixin, RequestHandler):
             return None
         return user
 
+    def initialize(self):
+        super(BaseAdminHandler, self).initialize()
+        self._session = self._make_session()
+
 
 def admin_require(f):
     @wraps(f)

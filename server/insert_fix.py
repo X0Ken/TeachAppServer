@@ -164,7 +164,9 @@ def main():
     session_factory = make_session_factory(options.database_url)
     m.DeclarativeBase.metadata.create_all(session_factory.engine)
     session = session_factory.make_session()
-    fix_question_state(session)
+    fix_user_create_at(session)
+    fix_queston_create_at(session)
+    fix_job_create_at(session)
     session.commit()
     session.close()
 
